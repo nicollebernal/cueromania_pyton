@@ -1,0 +1,111 @@
+from django.shortcuts import render, redirect
+from .models import Usuario, Producto
+from Carrito.carro import Carro
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        gmail = request.POST.get('gmail', '').strip()
+        clave = request.POST.get('clave', '').strip()
+
+        print(f"Buscando - Gmail: '{gmail}', Clave: '{clave}'")
+        
+
+        usuario = Usuario.objects.filter(gmail=gmail).first()
+        
+        if usuario:
+            print(f"Usuario encontrado: {usuario.primer_nombre}, Clave en BD: '{usuario.clave}'")
+            
+            
+            if str(usuario.clave) == str(clave):
+                request.session['usuario_id'] = usuario.id_usuario
+
+                rol_nombre = usuario.id_rol.nombre_rol if usuario.id_rol else None
+                print(f"Rol encontrado: {rol_nombre}")
+
+                if rol_nombre == 'administrador':
+                    return redirect('administrador')
+
+                elif rol_nombre == 'empleado':
+                    return redirect('empleado')
+
+                elif rol_nombre == 'cliente':
+                    return redirect('cliente')
+
+                else:
+                    return render(request, 'login/login.html', {'error': 'Rol no válido'})
+            else:
+                print(f"Contraseña no coincide")
+                return render(request, 'login/login.html', {
+                    'error': 'Contraseña incorrecta'
+                })
+        else:
+            print(f"No se encontró usuario con gmail: {gmail}")
+            return render(request, 'login/login.html', {
+                'error': 'Usuario no encontrado'
+            })
+
+    return render(request, 'login/login.html')
+
+
+def admin_dashboard(request):
+    return render(request, 'administrador/administrador.html')
+
+
+def empleado_dashboard(request):
+    return render(request, 'Empleado/empleado.html')
+
+
+def cliente_dashboard(request):
+    usuario_id = request.session.get('usuario_id')
+    
+
+    if not usuario_id:
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+    productos = Producto.objects.all()
+    carro = Carro(request)
+    for producto in productos:
+        producto.cantidad_en_carro = carro.carro.get(str(producto.id_producto), {}).get('cantidad', 0)
+    return render(request, 'cliente/cliente.html', {
+        'usuario': usuario,
+        'productos': productos
+    })
+
+
+def lista_productos(request):
+    productos = Producto.objects.all()
+    return render(request, 'cliente/cliente.html', {
+        'productos': productos
+    })
+
+def agregar(request, producto_id):
+    productos = Producto.objects.get(id_producto=producto_id)
+   
+    return render(request, 'cliente/cliente.html', {
+        'producto': productos})
+    
+
+def filtrar_producto(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+    query = request.GET.get('q', '').strip()
+    productos = Producto.objects.all()
+
+    if query:
+        productos = productos.filter(nombre__icontains=query)
+
+    carro = Carro(request)
+    for producto in productos:
+        producto.cantidad_en_carro = carro.carro.get(str(producto.id_producto), {}).get('cantidad', 0)
+
+    return render(request, 'cliente/cliente.html', {
+        'usuario': usuario,
+        'productos': productos,
+        'query': query
+    })

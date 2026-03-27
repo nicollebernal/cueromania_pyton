@@ -1,0 +1,20 @@
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+<div class="container py-5">
+    <h1 class="text-center">Editar Producto</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" action="{% url 'editar' producto.id_producto %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{ producto.cantidad }}" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <a href="{% url 'carro' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

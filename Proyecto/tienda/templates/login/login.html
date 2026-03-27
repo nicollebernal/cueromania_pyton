@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/miapp.css' %}">
+</head>
+
+<body >
+
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height:100vh;">
+
+    <img src="{% static 'img/logo.jpeg' %}" 
+         alt="Logo" 
+         class="mb-3"
+         style="width:130px;">
+
+    
+    <form method="post" class="card p-4 shadow" style="width:100%; max-width:520px; border-radius:15px;">
+        
+        {% csrf_token %}
+
+        <h3 class="text-center mb-4">Iniciar Sesión</h3>
+
+        <div class="mb-3">
+            <label for="gmail" class="form-label">Gmail</label>
+            <input type="text" id="gmail" name="gmail" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="clave" class="form-label">Contraseña</label>
+            <input type="password" id="clave" name="clave" class="form-control" required>
+        </div>
+        
+        <br/>
+
+        <button type="submit" class="btn btn-primary w-100 " >
+            Iniciar Sesión
+        </button>
+
+        {% if error %}
+        <p class="text-danger text-center mt-3">{{ error }}</p>
+        {% endif %}
+
+    </form>
+
+</div>
+
+<div>
+   <div class ="circulo1"></div>
+   <div class ="circulo2"></div>
+   <div class ="circulo3"></div>
+   <div class ="circulo4"></div>
+</div>
+</body>
+</html>

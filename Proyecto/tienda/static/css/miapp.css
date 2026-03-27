@@ -1,0 +1,93 @@
+body {
+    background: linear-gradient(135deg, #F5F1EA, #E8DCC8);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+.card {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    padding: 35px;
+}
+
+img {
+    border-radius: 50%;
+    background: white;
+    padding: 5px;
+}
+
+h3 {
+    font-weight: 600;
+    color: #5C4033;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #E8DCC8;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #5C4033, #8B6914);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #8B6914, #5C4033);
+}
+
+.circulo1 {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    background: linear-gradient(135deg, #6B1F1F, #8B3A3A);
+    border-radius: 50%;
+    top: 60px;
+    left: 220px;
+    filter: blur(80px);
+    opacity: 0.5;
+    z-index: -1;
+}
+
+.circulo2 {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, #8B6914, #C9A227);
+    border-radius: 50%;
+    top: 220px;
+    right: 190px;
+    filter: blur(80px);
+    opacity: 0.45;
+    z-index: -1;
+}
+
+.circulo3 {
+    position: absolute;
+    width: 230px;
+    height: 230px;
+    background: linear-gradient(135deg, #5C4033, #8B7355);
+    border-radius: 50%;
+    bottom: 80px;
+    right: 200px;
+    filter: blur(90px);
+    opacity: 0.35;
+    z-index: -1;
+}
+
+.circulo4 {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(135deg, #E8DCC8, #FFF8E7);
+    border-radius: 50%;
+    bottom: 120px;
+    left: 260px;
+    filter: blur(100px);
+    opacity: 0.35;
+    z-index: -1;
+}

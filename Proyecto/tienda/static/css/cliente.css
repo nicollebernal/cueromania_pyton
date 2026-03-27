@@ -1,0 +1,203 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #FFF8E7;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container1 {
+    background: linear-gradient(135deg, #5C4033 0%, #8B6914 100%);
+    color: white;
+    padding: 15px 25px;
+}
+
+.container1 h3 {
+    font-weight: 600;
+}
+
+.menu-link {
+    color: #5C4033;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 15px;
+    transition: color 0.3s ease;
+}
+
+.menu-link:hover {
+    color: #8B6914;
+}
+
+.usuario-nombre {
+    font-weight: 500;
+    color: #FFF8E7;
+}
+
+.search-bar input {
+    background-color: #FFF8E7;
+    border: 1px solid #E8DCC8;
+    border-radius: 25px;
+    padding: 10px 20px;
+    color: #3D3D3D;
+    width: 280px;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.02);
+}
+
+.search-bar input::placeholder {
+    color: #8B7355;
+}
+
+.search-bar button {
+    background: linear-gradient(135deg, #5C4033, #8B6914);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: 500;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.search-bar button:hover {
+    background: linear-gradient(135deg, #8B6914, #5C4033);
+    transform: scale(1.05);
+}
+
+nav {
+    background-color: #FAF8F5;
+    border-bottom: 1px solid #E8DCC8;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 0;
+    padding: 0;
+}
+
+.producto-card {
+    border: none;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgb(255, 0, 0);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.precio {
+    color: #5C4033;
+    font-weight: bold;
+}
+
+.btn-comprar {
+    background: linear-gradient(135deg, #5C4033, #8B6914);
+    border: none;
+    color: white;
+}
+
+.btn-comprar:hover {
+    background: linear-gradient(135deg, #e2a815, #d95213);
+}
+
+footer {
+    background: linear-gradient(135deg, #5C4033 0%, #3D2A1E 100%);
+    color: #E8DCC8;
+    text-align: center;
+    padding: 20px;
+}
+
+.bi-cart a {
+    color: black;
+}
+
+.usuario-nombre {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.menu_list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 80px;
+    background: linear-gradient(120deg, #8B6914 40%, #ac8e42 65%);
+    padding: 5px 10px;
+    border-radius: 5px;
+    list-style: none;
+    margin: 0;
+}
+
+.menu_item a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+}
+
+.menu_item a:hover {
+    color: #ffffff;
+}
+
+.usuario-nombre:hover .menu_list {
+    display: block;
+}
+
+.card-body .btn {
+    background: #E8DCC8;
+}
+
+.producto-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.btn-comprar {
+    background-color: #6c3f2a;
+    color: #fff;
+    font-weight: bold;
+}
+
+.btn-comprar:hover {
+    background-color: #4a281a;
+    color: #fff;
+}
+
+.btn-sm {
+    background-color: #ddd;
+    border: none;
+    font-weight: bold;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+nav .menu-link:hover {
+    text-decoration: underline;
+}
+
+footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #ddd;
+}

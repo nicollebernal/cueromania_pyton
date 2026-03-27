@@ -1,0 +1,17 @@
+.container {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #FFF8E7;
+    border: 1px #E8DCC8;
+    margin-top: 5%;
+    border-radius: 20px;
+}
+
+.container1 {
+    background: linear-gradient(135deg, #5C4033 0%, #8B6914 100%);
+    color: white;
+    padding: 15px 25px;
+}
+
+.container1 h3 {
+    font-weight: 600;
+}
