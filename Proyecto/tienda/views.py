@@ -1,8 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Usuario, Producto
+from .models import Usuario, Producto ,Rol
+from django.contrib.auth.hashers import make_password
 from Carrito.carro import Carro
 
 
+
+from django.shortcuts import render, redirect
+from .models import Usuario, Producto, Rol
+from django.contrib.auth.hashers import check_password
+from Carrito.carro import Carro
 
 def login_view(request):
     if request.method == 'POST':
@@ -10,15 +16,14 @@ def login_view(request):
         clave = request.POST.get('clave', '').strip()
 
         print(f"Buscando - Gmail: '{gmail}', Clave: '{clave}'")
-        
 
         usuario = Usuario.objects.filter(gmail=gmail).first()
         
         if usuario:
             print(f"Usuario encontrado: {usuario.primer_nombre}, Clave en BD: '{usuario.clave}'")
             
-            
-            if str(usuario.clave) == str(clave):
+        
+            if check_password(clave, usuario.clave):
                 request.session['usuario_id'] = usuario.id_usuario
 
                 rol_nombre = usuario.id_rol.nombre_rol if usuario.id_rol else None
@@ -26,27 +31,21 @@ def login_view(request):
 
                 if rol_nombre == 'administrador':
                     return redirect('administrador')
-
                 elif rol_nombre == 'empleado':
                     return redirect('empleado')
-
                 elif rol_nombre == 'cliente':
                     return redirect('cliente')
-
                 else:
                     return render(request, 'login/login.html', {'error': 'Rol no válido'})
             else:
-                print(f"Contraseña no coincide")
-                return render(request, 'login/login.html', {
-                    'error': 'Contraseña incorrecta'
-                })
+                print("Contraseña no coincide")
+                return render(request, 'login/login.html', {'error': 'Contraseña incorrecta'})
         else:
             print(f"No se encontró usuario con gmail: {gmail}")
-            return render(request, 'login/login.html', {
-                'error': 'Usuario no encontrado'
-            })
+            return render(request, 'login/login.html', {'error': 'Usuario no encontrado'})
 
     return render(request, 'login/login.html')
+
 
 
 def admin_dashboard(request):
@@ -109,3 +108,34 @@ def filtrar_producto(request):
         'productos': productos,
         'query': query
     })
+
+def registrar_usuario(request):
+    if request.method == 'POST':
+        id_usuario = request.POST ['id_usuario']
+        primer_nombre = request.POST['primer_nombre']
+        segundo_nombre = request.POST['segundo_nombre']
+        primer_apellido = request.POST['primer_apellido']
+        segundo_apellido = request.POST['segundo_apellido']
+        direccion = request.POST['direccion']
+        contacto = request.POST['contacto']
+        gmail = request.POST['gmail']
+        clave = make_password(request.POST['clave'])  # 🔑 aquí se cifra la clave
+        rol_cliente = Rol.objects.get(nombre_rol='cliente')
+
+        usuario = Usuario.objects.create(
+            id_usuario=id_usuario,
+            primer_nombre=primer_nombre,
+            segundo_nombre=segundo_nombre,
+            primer_apellido=primer_apellido,
+            segundo_apellido=segundo_apellido,
+            direccion=direccion,
+            contacto=contacto,
+            gmail=gmail,
+            clave=clave,
+            id_rol=rol_cliente
+        )
+        usuario.save()
+        return redirect('login') 
+
+    roles = Rol.objects.all()
+    return render(request, 'login/registro.html', {'roles': roles})

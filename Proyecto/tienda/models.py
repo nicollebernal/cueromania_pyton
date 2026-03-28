@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 class Rol (models.Model):
    id_rol = models.AutoField(primary_key=True)
@@ -22,6 +23,13 @@ class Usuario (models.Model):
     
     class Meta:
         db_table = 'usuarios'
+    
+    def save(self, *args, **kwargs ):
+        if not self.clave.startswith('pbkdf2_'):
+            self.clave = make_password(self.clave)
+        super().save(*args, **kwargs)
+    def verificar_clave(self,password):
+        return check_password(password, self.clave)
 
 
 class tipos_cierres (models.Model):
@@ -77,3 +85,4 @@ class Producto (models.Model):
     id_categoria = models.ForeignKey(categoria, on_delete=models.CASCADE, db_column='id_categoria')
     class Meta:
         db_table = 'productos'
+

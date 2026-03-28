@@ -17,28 +17,43 @@
     <img src="{% static 'img/logo.jpeg' %}" 
          alt="Logo" 
          class="mb-3"
-         style="width:130px;">
+         style="width:120px;">
 
     
-    <form method="post" class="card p-4 shadow" style="width:100%; max-width:520px; border-radius:15px;">
+    <form method="post" class="card p-4 " style="width:100%; max-width:520px; border-radius:15px;">
         
         {% csrf_token %}
 
         <h3 class="text-center mb-4">Iniciar Sesión</h3>
 
-        <div class="mb-3">
-            <label for="gmail" class="form-label">Gmail</label>
-            <input type="text" id="gmail" name="gmail" class="form-control" required>
+        <div class="correo mb-3 position-relative">
+           <label for="gmail" class="form-label">Correo electrónico</label>
+           <input type="text" id="gmail" name="gmail" class="form-control" required placeholder="Email" style="padding-left: 40px;">
+           <img src="https://img.icons8.com/ios/50/gmail--v1.png" alt="gmail" style="position: absolute; left: 12px; top: 40px; width: 20px; height: 20px; opacity: 0.7; margin-right: 10px;">
         </div>
 
-        <div class="mb-3">
+
+
+        <div class="contrasena mb-3 position-relative">
             <label for="clave" class="form-label">Contraseña</label>
-            <input type="password" id="clave" name="clave" class="form-control" required>
+            <input type="password" id="clave" name="clave" class="form-control" required placeholder ="Password" style = " padding-left: 40px;">
+            <img src="https://img.icons8.com/ios/50/password--v1.png" alt="password--v1"alt="password" style="position: absolute; left: 12px; top: 40px; width: 20px; height: 20px; opacity: 0.7; margin-right: 10px;"/>
         </div>
-        
-        <br/>
 
-        <button type="submit" class="btn btn-primary w-100 " >
+        <div class=" mb-3 d-flex justify-content-between">
+            <a href="/recuperar" class="link-light" style="font-size: 0.9rem;">
+                ¿Olvidaste tu contraseña?
+            </a>
+            <div>
+                <span style="font-size: 0.9rem; ">¿No tienes cuenta?</span>
+                <a href="{% url 'registrar_usuario' %}" class="link-danger fw-bold" style="margin-left: 5px;">Regístrate</a>
+            </div>
+    
+        </div>
+    
+      
+
+        <button type="submit" class="btn btn-primary" >
             Iniciar Sesión
         </button>
 
@@ -50,11 +65,5 @@
 
 </div>
 
-<div>
-   <div class ="circulo1"></div>
-   <div class ="circulo2"></div>
-   <div class ="circulo3"></div>
-   <div class ="circulo4"></div>
-</div>
 </body>
 </html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro</title>
+</head>
+<body>
+    <h2>Registro de Usuario</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="id_usuario" placeholder="Cédula" required><br>
+        <input type="text" name="primer_nombre" placeholder="Primer nombre" required><br>
+        <input type="text" name="segundo_nombre" placeholder="Segundo nombre"><br>
+        <input type="text" name="primer_apellido" placeholder="Primer apellido" required><br>
+        <input type="text" name="segundo_apellido" placeholder="Segundo apellido"><br>
+        <input type="text" name="direccion" placeholder="Dirección"><br>
+        <input type="text" name="contacto" placeholder="Contacto"><br>
+        <input type="email" name="gmail" placeholder="Correo electrónico" required><br>
+        <input type="password" name="clave" placeholder="Contraseña" required><br>
+
+        <button type="submit">Registrar</button>
+    </form>
+</body>
+</html>

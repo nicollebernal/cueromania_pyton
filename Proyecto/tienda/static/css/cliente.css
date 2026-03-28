@@ -10,7 +10,7 @@ body {
 }
 
 .container1 {
-    background: linear-gradient(135deg, #5C4033 0%, #8B6914 100%);
+    background: linear-gradient(135deg, #7a0c14 0%, #a3141f 100%);
     color: white;
     padding: 15px 25px;
 }
@@ -20,7 +20,7 @@ body {
 }
 
 .menu-link {
-    color: #5C4033;
+    color: #7a0c14;
     font-weight: 500;
     text-decoration: none;
     padding: 8px 15px;
@@ -28,7 +28,7 @@ body {
 }
 
 .menu-link:hover {
-    color: #8B6914;
+    color: #a3141f;
 }
 
 .usuario-nombre {
@@ -44,22 +44,22 @@ body {
     color: #3D3D3D;
     width: 280px;
     font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(122, 12, 20, 0.3);
     transition: all 0.3s ease;
 }
 
 .search-bar input:focus {
     outline: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(122, 12, 20, 0.5);
     transform: scale(1.02);
 }
 
 .search-bar input::placeholder {
-    color: #8B7355;
+    color: #7a0c14;
 }
 
 .search-bar button {
-    background: linear-gradient(135deg, #5C4033, #8B6914);
+    background: linear-gradient(135deg, #7a0c14, #a3141f);
     border: none;
     border-radius: 25px;
     padding: 10px 20px;
@@ -70,13 +70,13 @@ body {
 }
 
 .search-bar button:hover {
-    background: linear-gradient(135deg, #8B6914, #5C4033);
+    background: linear-gradient(135deg, #d95213, #e2a815);
     transform: scale(1.05);
 }
 
 nav {
     background-color: #FAF8F5;
-    border-bottom: 1px solid #E8DCC8;
+    border-bottom: 1px solid #7a0c14;
 }
 
 nav ul {
@@ -89,14 +89,15 @@ nav ul {
 }
 
 .producto-card {
-    border: none;
+    border: 1px solid #7a0c14;
     border-radius: 10px;
     transition: 0.3s;
+    box-shadow: 0 0 20px rgba(122, 12, 20, 0.7), 0 0 40px rgba(122, 12, 20, 0.5), 0 0 80px rgba(122, 12, 20, 0.3);
 }
 
 .producto-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0px 8px 20px rgb(255, 0, 0);
+    box-shadow: 0 0 25px rgba(122, 12, 20, 0.9), 0 0 50px rgba(122, 12, 20, 0.6), 0 0 100px rgba(122, 12, 20, 0.4);
 }
 
 .card-img-top {
@@ -105,29 +106,33 @@ nav ul {
 }
 
 .precio {
-    color: #5C4033;
+    color: #7a0c14;
     font-weight: bold;
 }
 
 .btn-comprar {
-    background: linear-gradient(135deg, #5C4033, #8B6914);
+    background: linear-gradient(135deg, #7a0c14, #a3141f);
     border: none;
     color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 .btn-comprar:hover {
-    background: linear-gradient(135deg, #e2a815, #d95213);
+    background: linear-gradient(135deg, #d95213, #e2a815);
+    color: #fff;
+    transform: scale(1.05);
 }
 
 footer {
-    background: linear-gradient(135deg, #5C4033 0%, #3D2A1E 100%);
+    background: linear-gradient(135deg, #7a0c14 0%, #3D2A1E 100%);
     color: #E8DCC8;
     text-align: center;
     padding: 20px;
 }
 
 .bi-cart a {
-    color: black;
+    color: #7a0c14;
 }
 
 .usuario-nombre {
@@ -141,7 +146,7 @@ footer {
     position: absolute;
     top: 100%;
     left: 80px;
-    background: linear-gradient(120deg, #8B6914 40%, #ac8e42 65%);
+    background: linear-gradient(120deg, #7a0c14 40%, #a3141f 65%);
     padding: 5px 10px;
     border-radius: 5px;
     list-style: none;
@@ -173,17 +178,6 @@ footer {
     border-radius: 5px;
 }
 
-.btn-comprar {
-    background-color: #6c3f2a;
-    color: #fff;
-    font-weight: bold;
-}
-
-.btn-comprar:hover {
-    background-color: #4a281a;
-    color: #fff;
-}
-
 .btn-sm {
     background-color: #ddd;
     border: none;
@@ -199,5 +193,5 @@ nav .menu-link:hover {
 
 footer {
     background-color: #f8f9fa;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #7a0c14;
 }
