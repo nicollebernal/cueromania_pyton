@@ -119,7 +119,7 @@ def registrar_usuario(request):
         direccion = request.POST['direccion']
         contacto = request.POST['contacto']
         gmail = request.POST['gmail']
-        clave = make_password(request.POST['clave'])  # 🔑 aquí se cifra la clave
+        clave = make_password(request.POST['clave']) 
         rol_cliente = Rol.objects.get(nombre_rol='cliente')
 
         usuario = Usuario.objects.create(

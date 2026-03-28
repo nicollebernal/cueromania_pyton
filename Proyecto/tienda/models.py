@@ -28,6 +28,7 @@ class Usuario (models.Model):
         if not self.clave.startswith('pbkdf2_'):
             self.clave = make_password(self.clave)
         super().save(*args, **kwargs)
+        
     def verificar_clave(self,password):
         return check_password(password, self.clave)
 
