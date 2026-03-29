@@ -2,22 +2,84 @@
 <html>
 <head>
     <title>Registro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: radial-gradient( #1f2428, #0f1113);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .card {
+            
+            background: rgba(18, 20, 23, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid #7a0c14;
+            box-shadow: 0 0 20px rgba(122, 12, 20, 0.9),
+                        0 0 40px rgba(122, 12, 20, 0.6),
+                        0 0 80px rgba(122, 12, 20, 0.4);
+            padding: 2rem;
+            max-width: 400px;
+            margin: 3rem auto;
+        }
+
+        .form-control {
+            width: 90%;
+            margin-bottom: 1rem;
+            padding: 0.7rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #ddd;
+            transition: 0.3s ease;
+        }
+
+        .form-control:focus {
+            border: 1px solid #b71c1c;
+            box-shadow: 0 0 6px #b71c1c;
+            outline: none;
+        }
+
+        .btn-primary {
+            width: 95%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #7a0c14, #c62828);
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #c62828, #7a0c14);
+            transform: scale(1.02);
+        }
+    </style>
 </head>
 <body>
-    <h2>Registro de Usuario</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="id_usuario" placeholder="Cédula" required><br>
-        <input type="text" name="primer_nombre" placeholder="Primer nombre" required><br>
-        <input type="text" name="segundo_nombre" placeholder="Segundo nombre"><br>
-        <input type="text" name="primer_apellido" placeholder="Primer apellido" required><br>
-        <input type="text" name="segundo_apellido" placeholder="Segundo apellido"><br>
-        <input type="text" name="direccion" placeholder="Dirección"><br>
-        <input type="text" name="contacto" placeholder="Contacto"><br>
-        <input type="email" name="gmail" placeholder="Correo electrónico" required><br>
-        <input type="password" name="clave" placeholder="Contraseña" required><br>
+    <div class="card ">
+        <h2>Registro de Usuario</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="id_usuario" placeholder="Cédula" class="form-control" required>
+            <input type="text" name="primer_nombre" placeholder="Primer nombre" class="form-control" required>
+            <input type="text" name="segundo_nombre" placeholder="Segundo nombre" class="form-control">
+            <input type="text" name="primer_apellido" placeholder="Primer apellido" class="form-control" required>
+            <input type="text" name="segundo_apellido" placeholder="Segundo apellido" class="form-control">
+            <input type="text" name="direccion" placeholder="Dirección" class="form-control">
+            <input type="text" name="contacto" placeholder="Contacto" class="form-control">
+            <input type="email" name="gmail" placeholder="Correo electrónico" class="form-control" required>
+            <input type="password" name="clave" placeholder="Contraseña" class="form-control" required>
 
-        <button type="submit">Registrar</button>
-    </form>
+            <button type="submit" class="btn-primary">Registrar</button>
+        </form>
+    </div>
 </body>
 </html>
