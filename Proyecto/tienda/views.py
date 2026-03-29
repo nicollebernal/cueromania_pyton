@@ -1,55 +1,41 @@
 from django.shortcuts import render, redirect
-from .models import Usuario, Producto ,Rol
+from .models import Usuario, Producto, Rol
 from django.contrib.auth.hashers import make_password
 from Carrito.carro import Carro
 
 
-
-from django.shortcuts import render, redirect
-from .models import Usuario, Producto, Rol
-from django.contrib.auth.hashers import check_password
-from Carrito.carro import Carro
-
 def login_view(request):
     if request.method == 'POST':
         gmail = request.POST.get('gmail', '').strip()
-        clave = request.POST.get('clave', '').strip()
+        clave = request.POST.get('clave', '')
 
-        print(f"Buscando - Gmail: '{gmail}', Clave: '{clave}'")
+        usuario = (
+            Usuario.objects.filter(gmail__iexact=gmail)
+            .select_related('id_rol')
+            .first()
+        )
 
-        usuario = Usuario.objects.filter(gmail=gmail).first()
-        
-        if usuario:
-            print(f"Usuario encontrado: {usuario.primer_nombre}, Clave en BD: '{usuario.clave}'")
-            
-        
-            if check_password(clave, usuario.clave):
-                request.session['usuario_id'] = usuario.id_usuario
-
-                rol_nombre = usuario.id_rol.nombre_rol if usuario.id_rol else None
-                print(f"Rol encontrado: {rol_nombre}")
-
-                if rol_nombre == 'administrador':
-                    return redirect('administrador')
-                elif rol_nombre == 'empleado':
-                    return redirect('empleado')
-                elif rol_nombre == 'cliente':
-                    return redirect('cliente')
-                else:
-                    return render(request, 'login/login.html', {'error': 'Rol no válido'})
-            else:
-                print("Contraseña no coincide")
-                return render(request, 'login/login.html', {'error': 'Contraseña incorrecta'})
-        else:
-            print(f"No se encontró usuario con gmail: {gmail}")
+        if not usuario:
             return render(request, 'login/login.html', {'error': 'Usuario no encontrado'})
 
+        if not usuario.verificar_clave(clave):
+            return render(request, 'login/login.html', {'error': 'Contraseña incorrecta'})
+
+        # Si la BD tenía texto plano o MD5, migrar a hash Django una sola vez
+        usuario.migrar_clave_a_hash_django(clave)
+
+        request.session['usuario_id'] = usuario.id_usuario
+
+        rol_nombre = (usuario.id_rol.nombre_rol or '').strip().lower() if usuario.id_rol else ''
+        if rol_nombre == 'administrador':
+            return redirect('administrador')
+        if rol_nombre == 'empleado':
+            return redirect('empleado')
+        if rol_nombre == 'cliente':
+            return redirect('cliente')
+        return render(request, 'login/login.html', {'error': 'Rol no válido'})
+
     return render(request, 'login/login.html')
-
-
-
-def admin_dashboard(request):
-    return render(request, 'administrador/administrador.html')
 
 
 def empleado_dashboard(request):
@@ -58,7 +44,6 @@ def empleado_dashboard(request):
 
 def cliente_dashboard(request):
     usuario_id = request.session.get('usuario_id')
-    
 
     if not usuario_id:
         return redirect('login')
@@ -82,10 +67,10 @@ def lista_productos(request):
 
 def agregar(request, producto_id):
     productos = Producto.objects.get(id_producto=producto_id)
-   
+
     return render(request, 'cliente/cliente.html', {
         'producto': productos})
-    
+
 
 def filtrar_producto(request):
     usuario_id = request.session.get('usuario_id')
@@ -119,7 +104,7 @@ def registrar_usuario(request):
         direccion = request.POST['direccion']
         contacto = request.POST['contacto']
         gmail = request.POST['gmail']
-        clave = make_password(request.POST['clave']) 
+        clave = make_password(request.POST['clave'])  # 🔑 aquí se cifra la clave
         rol_cliente = Rol.objects.get(nombre_rol='cliente')
 
         usuario = Usuario.objects.create(
@@ -135,7 +120,7 @@ def registrar_usuario(request):
             id_rol=rol_cliente
         )
         usuario.save()
-        return redirect('login') 
+        return redirect('login')
 
     roles = Rol.objects.all()
     return render(request, 'login/registro.html', {'roles': roles})

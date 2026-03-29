@@ -1,0 +1,24 @@
+{% extends "panel_admin/base_interior.html" %}
+{% block title %}{{ titulo }} — Administración{% endblock %}
+{% block content %}
+<div class="interior-narrow">
+    <div class="form-container-interior">
+        <h2 class="interior-title text-center">{{ titulo }}</h2>
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="col-md-6">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for err in field.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+            {% endfor %}
+            <div class="col-12 mt-3 d-flex justify-content-between">
+                <a href="{% url 'panel_productos' %}" class="btn btn-secondary">← Volver</a>
+                <button type="submit" class="btn btn-primary px-4">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

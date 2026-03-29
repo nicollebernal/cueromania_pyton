@@ -1,0 +1,89 @@
+{% extends "panel_admin/base_interior.html" %}
+{% block title %}{{ titulo }} — Cueromania{% endblock %}
+{% block content %}
+<div class="interior-narrow">
+    <div class="form-container-interior panel-card-form">
+        <h1 class="interior-title text-center h3 mb-3">{{ titulo }}</h1>
+
+        <div class="panel-resumen-montos mb-4">
+            <div class="panel-resumen-caja">
+                <div class="etiqueta">Monto del pago (campo «Monto de este pago»)</div>
+                <div class="valor" id="js-resumen-monto-pago">—</div>
+            </div>
+            <div class="panel-resumen-caja">
+                <div class="etiqueta">Total de la venta vinculada (referencia)</div>
+                <div class="valor" id="js-resumen-total-venta-ref">—</div>
+            </div>
+        </div>
+
+        <p class="small panel-texto-ayuda mb-3">
+            El <strong>monto del pago</strong> es lo que cobras en este registro. El <strong>total de la venta</strong> es el de la venta elegida en la lista (solo referencia).
+        </p>
+
+        <form method="post" class="row g-3 panel-form-montos" id="form-pago">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="col-md-6">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for err in field.errors %}<div class="text-warning small">{{ err }}</div>{% endfor %}
+            </div>
+            {% endfor %}
+            <div class="col-12 mt-4 d-flex justify-content-between flex-wrap gap-2">
+                <a href="{% url 'panel_pagos' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-panel-primario px-4">{% if pago %}Guardar{% else %}Registrar pago{% endif %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function() {
+    function fmtMonto(n) {
+        if (n === '' || n === null) return '—';
+        var x = parseFloat(String(n).replace(',', '.'));
+        if (isNaN(x)) return '—';
+        return '$' + x.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function parseTotalVentaFromOption(opt) {
+        if (!opt || !opt.textContent) return '—';
+        var t = opt.textContent;
+        var m = t.match(/\$([\d.]+)/);
+        if (!m) return '—';
+        var x = parseFloat(m[1]);
+        if (isNaN(x)) return '—';
+        return '$' + x.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function sync() {
+        var precio = document.querySelector('#form-pago input[name="precio"]');
+        var elP = document.getElementById('js-resumen-monto-pago');
+        if (precio && elP) elP.textContent = fmtMonto(precio.value);
+
+        var sel = document.querySelector('#form-pago select[name="id_venta"]');
+        var elV = document.getElementById('js-resumen-total-venta-ref');
+        if (sel && elV) {
+            var opt = sel.options[sel.selectedIndex];
+            if (!opt || !opt.value) {
+                elV.textContent = '— (sin venta)';
+            } else {
+                elV.textContent = parseTotalVentaFromOption(opt);
+            }
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('form-pago');
+        if (!form) return;
+        var precio = form.querySelector('input[name="precio"]');
+        var sel = form.querySelector('select[name="id_venta"]');
+        if (precio) {
+            precio.addEventListener('input', sync);
+            precio.addEventListener('change', sync);
+        }
+        if (sel) sel.addEventListener('change', sync);
+        sync();
+    });
+})();
+</script>
+{% endblock %}

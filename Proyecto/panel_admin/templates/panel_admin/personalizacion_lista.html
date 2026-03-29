@@ -1,0 +1,101 @@
+{% extends "panel_admin/base_interior.html" %}
+{% load static %}
+{% block title %}Gestión de Personalizaciones — Cueromania{% endblock %}
+{% block content %}
+<div class="interior-main-container">
+    <div class="interior-white-panel">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+            <div>
+                <h2 class="interior-title">Gestión de Personalizaciones</h2>
+                <span class="stat-badge">{{ items|length }} solicitudes</span>
+            </div>
+            <a href="{% url 'administrador' %}" class="btn-volver">← Volver al Panel</a>
+        </div>
+
+        {% if items %}
+        <div class="table-responsive">
+            <table class="table-admin w-100">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagen</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Categoría</th>
+                        <th>Color</th>
+                        <th>Marca</th>
+                        <th>Género</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in items %}
+                    <tr>
+                        <td><strong>#{{ p.id_personalizacion }}</strong></td>
+                        <td>
+                            {% if p.imagen_personalizacion %}
+                            <img src="{{ p.imagen_personalizacion.url }}" alt="" class="img-personalizacion js-zoom-img">
+                            {% else %}
+                            <div class="no-image">Sin imagen</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="small fw-semibold" style="color:#8d1b2e;">ID: {{ p.id_usuario_id }}</div>
+                            <div class="small text-muted">{{ p.nombre_usuario_completo }}</div>
+                        </td>
+                        <td>{{ p.fecha_solicitud|date:"d/m/Y" }}</td>
+                        <td>{{ p.id_categoria.nombre_categoria }}</td>
+                        <td>{{ p.id_color.nombre_color }}</td>
+                        <td>{{ p.id_marca.nombre_marca }}</td>
+                        <td>{{ p.id_genero.nombre_genero }}</td>
+                        <td><div class="descripcion-cell" title="{{ p.descripcion }}">{{ p.descripcion }}</div></td>
+                        <td>
+                            <div class="acciones-btns">
+                                <a href="{% url 'panel_personalizacion_ver' p.pk %}" class="btn-accion btn-ver">Ver</a>
+                                <a href="{% url 'panel_personalizacion_editar' p.pk %}" class="btn-accion btn-editar">✏ Editar</a>
+                                <a href="{% url 'panel_personalizacion_eliminar' p.pk %}" class="btn-accion btn-eliminar">🗑</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="sin-datos">
+            <h3>📭 No hay personalizaciones</h3>
+            <p>Las solicitudes de personalización aparecerán aquí cuando los clientes las creen.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="modal-imagen" id="modalImagen" aria-hidden="true">
+    <button type="button" class="cerrar" id="cerrarModal" aria-label="Cerrar">&times;</button>
+    <img id="imagenGrande" src="" alt="Vista ampliada">
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function() {
+    document.querySelectorAll('.js-zoom-img').forEach(function(img) {
+        img.addEventListener('click', function() {
+            var m = document.getElementById('modalImagen');
+            var big = document.getElementById('imagenGrande');
+            big.src = img.src;
+            m.classList.add('is-open');
+        });
+    });
+    var m = document.getElementById('modalImagen');
+    if (m) {
+        m.addEventListener('click', function(e) {
+            if (e.target === m || e.target.id === 'cerrarModal') m.classList.remove('is-open');
+        });
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && m) m.classList.remove('is-open');
+    });
+})();
+</script>
+{% endblock %}

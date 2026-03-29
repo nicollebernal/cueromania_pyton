@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
    
    path ('', views.login_view, name='login'),
-   path  ('administrador/', views.admin_dashboard, name='administrador'),
+   path  ('administrador/', include('panel_admin.urls')),
    path  ('empleado/', views.empleado_dashboard, name='empleado'),
    path ('registrar_usuario/', views.registrar_usuario, name ='registrar_usuario'),
    path  ('cliente/', views.cliente_dashboard, name='cliente'),

@@ -1,0 +1,57 @@
+{% extends "panel_admin/base_interior.html" %}
+{% block title %}Lista de Usuarios — Cueromania{% endblock %}
+{% block content %}
+<div class="container usuarios-container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h2 class="interior-title mb-0">Lista de Usuarios</h2>
+        <div class="d-flex gap-2">
+            <a href="{% url 'administrador' %}" class="btn btn-secondary">← Volver</a>
+            <a href="{% url 'panel_usuario_nuevo' %}" class="btn btn-primary">Crear Usuario</a>
+        </div>
+    </div>
+    <div class="table-responsive shadow-sm">
+        <table class="table table-hover table-bordered align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Documento</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Contacto</th>
+                    <th>Dirección</th>
+                    <th>Gmail</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u.id_usuario }}</td>
+                    <td>{{ u.primer_nombre }} {{ u.segundo_nombre }}</td>
+                    <td>{{ u.primer_apellido }} {{ u.segundo_apellido }}</td>
+                    <td>{{ u.contacto }}</td>
+                    <td>{{ u.direccion }}</td>
+                    <td>{{ u.gmail }}</td>
+                    <td>
+                        {% if u.id_rol %}
+                            {% with r=u.id_rol.nombre_rol|lower %}
+                                {% if r == 'cliente' %}Cliente
+                                {% elif r == 'administrador' %}Administrador
+                                {% elif r == 'empleado' %}Empleado
+                                {% else %}{{ u.id_rol.nombre_rol }}{% endif %}
+                            {% endwith %}
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'panel_usuario_editar' u.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{% url 'panel_usuario_eliminar' u.pk %}" class="btn btn-danger btn-sm ms-1">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-muted py-4">No hay usuarios.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,805 @@
+/* Panel admin — réplica visual del proyecto JSF (admin/index + vistas interiores) */
+
+/* ——— Dashboard (admin/index.xhtml) ——— */
+.admin-jsf.admin-dashboard-body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #313030;
+    color: #e0e0e0;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background-color: #1f1f1f;
+    padding-top: 20px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-sidebar .nav-link {
+    color: #cfcfcf;
+    font-weight: 500;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    border-radius: 0;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link:focus {
+    background-color: #811a2b;
+    color: #fff;
+}
+
+.sidebar-logo {
+    height: 60px;
+    width: auto;
+    max-width: 100%;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+}
+
+.btn-logout {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: #811a2b;
+    border-color: #811a2b;
+}
+
+.admin-main-wrap {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.admin-top-header {
+    background-color: #1f1f1f;
+    border-bottom: 2px solid #6e6768;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #e0e0e0;
+    flex-shrink: 0;
+}
+
+.logo-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-header h2 {
+    font-size: 24px;
+    margin: 0;
+    color: #e0e0e0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info span {
+    font-size: 15px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.user-info img {
+    filter: invert(100%);
+}
+
+.admin-dashboard-content.content-area {
+    padding: 40px 30px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.admin-dashboard-content h1.panel-title-main {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.card-option {
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(87, 85, 85, 0.5);
+    transition: transform 0.3s, background-color 0.3s;
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+}
+
+.card-option:hover {
+    transform: translateY(-5px) scale(1.02);
+    background-color: #811a2b;
+    color: #ffffff;
+}
+
+.card-option .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+}
+
+.card-option .card-body img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+    filter: invert(90%);
+}
+
+.card-option .card-body span {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.admin-footer {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    text-align: center;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.admin-footer p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.catalog-mini {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #6e6768;
+}
+
+.catalog-mini h3 {
+    color: #cfcfcf;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.catalog-mini .btn-outline-light {
+    border-color: #6e6768;
+    color: #e0e0e0;
+    font-size: 0.85rem;
+}
+
+.catalog-mini .btn-outline-light:hover {
+    background: #811a2b;
+    border-color: #811a2b;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .admin-jsf.admin-dashboard-body {
+        flex-direction: column;
+    }
+    .admin-sidebar {
+        width: 100%;
+        min-height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 12px;
+    }
+    .admin-sidebar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .sidebar-footer {
+        width: 100%;
+    }
+}
+
+/* ——— Vistas interiores (listas / formularios JSF) ——— */
+.admin-jsf.admin-interior-body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #333;
+}
+
+.interior-shell {
+    min-height: 100vh;
+}
+
+.interior-main-container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.interior-narrow {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.interior-white-panel {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 25px 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.interior-white-panel.container-tight {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h2.interior-title,
+.interior-title {
+    color: #8d1b2e;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+}
+
+.btn-volver {
+    background-color: #6c757d;
+    color: white !important;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-volver:hover {
+    background-color: #545b62;
+    color: white !important;
+}
+
+.btn-nuevo-green {
+    background-color: #28a745;
+    color: white !important;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-nuevo-green:hover {
+    background-color: #218838;
+    color: white !important;
+}
+
+.btn-refrescar {
+    background-color: #17a2b8;
+    color: white !important;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+.btn-refrescar:hover {
+    background-color: #138496;
+    color: white !important;
+}
+
+.btn-pdf {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white !important;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+.btn-pdf:hover {
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+/* Tablas estilo admin productos / ventas */
+.table-admin thead th {
+    background-color: #343a40;
+    color: white;
+    padding: 12px 10px;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+}
+
+.table-admin tbody td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+.table-admin tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.badge-activo {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+}
+
+.badge-inactivo {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+}
+
+.badge-pagado, .badge-entregado { background-color: #28a745; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+.badge-pendiente { background-color: #ffc107; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+.badge-cancelado { background-color: #dc3545; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+
+.precio-destacado {
+    font-weight: 700;
+    color: #28a745;
+}
+
+.stock-bajo { color: #dc3545; font-weight: 600; }
+.stock-ok { color: #28a745; }
+
+.acciones-btns {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-accion {
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-accion:hover { opacity: 0.85; color: white; }
+.btn-ver { background-color: #17a2b8; }
+.btn-editar { background-color: #ffc107; color: #000 !important; }
+.btn-eliminar { background-color: #dc3545; }
+
+/* Filtros productos */
+.filtros-container {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.filtros-titulo {
+    color: #8d1b2e;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.filtros-form {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filtro-grupo label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+}
+
+.filtro-grupo input,
+.filtro-grupo select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+.btn-buscar {
+    background: linear-gradient(135deg, #8d1b2e 0%, #c62828 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-weight: 600;
+}
+
+.btn-limpiar {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+.contador-resultados {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    color: #495057;
+    font-size: 14px;
+}
+
+.sin-datos {
+    text-align: center;
+    padding: 50px;
+    color: #888;
+}
+
+/* Modal imagen personalización */
+.modal-imagen {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-imagen.is-open {
+    display: flex;
+}
+
+.modal-imagen img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+
+.modal-imagen .cerrar {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+}
+
+.stat-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.img-personalizacion {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.no-image {
+    width: 80px;
+    height: 80px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+}
+
+.descripcion-cell {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Lista usuarios JSF */
+.usuarios-container {
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.usuarios-container .table thead th {
+    background-color: #212529;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+/* Formularios genéricos interior */
+.form-container-interior {
+    background: #fff;
+    border-radius: 15px;
+    padding: 35px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-container-interior .form-label {
+    font-weight: 600;
+    color: #333;
+}
+
+/* ========== Paleta Cueromania — panel interior ========== */
+.panel-tema-cueromania.interior-shell,
+.admin-interior-body.panel-tema-cueromania .interior-shell {
+    background: #7a0c14;
+    color: #fff;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+.panel-tema-cueromania .form-container-interior,
+.panel-tema-cueromania .interior-white-panel,
+.panel-tema-cueromania .filtros-container,
+.panel-tema-cueromania .usuarios-container,
+.panel-tema-cueromania .panel-card-form {
+    background: #8f2a2f !important;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.panel-tema-cueromania .interior-title,
+.panel-tema-cueromania .filtros-titulo,
+.panel-tema-cueromania h1,
+.panel-tema-cueromania h2,
+.panel-tema-cueromania h3 {
+    color: #fff !important;
+}
+
+.panel-tema-cueromania .form-label {
+    color: #fff !important;
+}
+
+.panel-tema-cueromania input.form-control,
+.panel-tema-cueromania select.form-select,
+.panel-tema-cueromania textarea.form-control {
+    background: #e6e6e6 !important;
+    color: #222;
+    border: 1px solid #bdbdbd;
+}
+
+.panel-tema-cueromania .form-text,
+.panel-tema-cueromania .panel-texto-ayuda {
+    color: #f5c6c6 !important;
+}
+
+.panel-tema-cueromania .panel-info-cliente {
+    color: #f5c6c6;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.panel-tema-cueromania a:not(.btn) {
+    color: #f5c6c6;
+}
+
+.panel-tema-cueromania a:not(.btn):hover {
+    color: #fff;
+}
+
+.panel-tema-cueromania .btn-panel-primario,
+.panel-tema-cueromania .btn-primary {
+    background: #c62828 !important;
+    border-color: #c62828 !important;
+    color: #fff !important;
+}
+
+.panel-tema-cueromania .btn-panel-primario:hover,
+.panel-tema-cueromania .btn-primary:hover {
+    background: #b71c1c !important;
+    border-color: #b71c1c !important;
+    color: #fff !important;
+}
+
+.panel-tema-cueromania .btn-secondary {
+    background: transparent !important;
+    border: 1px solid #f5c6c6 !important;
+    color: #f5c6c6 !important;
+}
+
+.panel-tema-cueromania .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #fff !important;
+    border-color: #fff !important;
+}
+
+.panel-tema-cueromania .alert-danger {
+    background: rgba(0, 0, 0, 0.35);
+    color: #ffcdd2;
+    border-color: #e57373;
+}
+
+.panel-resumen-montos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.panel-resumen-caja {
+    background: rgba(0, 0, 0, 0.22);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.panel-resumen-caja--destacado {
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.5);
+}
+
+.panel-resumen-caja .etiqueta {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #f5c6c6;
+    margin-bottom: 0.4rem;
+}
+
+.panel-resumen-caja .valor {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+/* Tablas y listados con tema */
+.panel-tema-cueromania .table-admin thead th {
+    background: #5c0a10;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.panel-tema-cueromania .table-admin tbody td {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.panel-tema-cueromania .table-admin tbody tr:hover td {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.panel-tema-cueromania .table {
+    color: #fff;
+    --bs-table-bg: transparent;
+    --bs-table-color: #fff;
+}
+
+.panel-tema-cueromania .table thead.table-dark th {
+    background: #5c0a10 !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.panel-tema-cueromania .table tbody td {
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.panel-tema-cueromania .table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(0, 0, 0, 0.12);
+}
+
+.panel-tema-cueromania .precio-destacado {
+    color: #fff !important;
+    font-weight: 700;
+}
+
+.panel-tema-cueromania .contador-resultados {
+    background: rgba(0, 0, 0, 0.2);
+    color: #f5c6c6;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-tema-cueromania .sin-datos {
+    color: #f5c6c6;
+}
+
+.panel-tema-cueromania .text-muted {
+    color: #f5c6c6 !important;
+}
+
+.panel-tema-cueromania .btn-warning {
+    background: #c62828;
+    border-color: #c62828;
+    color: #fff;
+}
+
+.panel-tema-cueromania .btn-warning:hover {
+    background: #b71c1c;
+    color: #fff;
+}
+
+.panel-tema-cueromania .btn-danger {
+    background: #8a1010;
+    border-color: #8a1010;
+}
+
+.panel-tema-cueromania .btn-danger:hover {
+    background: #6d0c0c;
+}
+
+.panel-tema-cueromania .btn-success {
+    background: #2e7d32;
+    border-color: #2e7d32;
+    color: #fff;
+}
+
+.panel-tema-cueromania .btn-success:hover {
+    background: #1b5e20;
+    border-color: #1b5e20;
+    color: #fff;
+}
+
+.panel-tema-cueromania .alert {
+    border-radius: 10px;
+}
+
+.panel-tema-cueromania .alert-success {
+    background: rgba(46, 125, 50, 0.35);
+    color: #e8f5e9;
+    border-color: #66bb6a;
+}

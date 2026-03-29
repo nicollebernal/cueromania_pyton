@@ -1,0 +1,59 @@
+{% extends "panel_admin/base_dashboard.html" %}
+{% block title %}Panel de Administración — Cueromania{% endblock %}
+{% block content %}
+<h1 class="panel-title-main">Panel de Administración</h1>
+<div class="row justify-content-center g-4">
+    <div class="col-sm-5 col-md-5 col-lg-3">
+        <a href="{% url 'panel_usuarios' %}" class="card card-option text-decoration-none">
+            <div class="card-body">
+                <img src="https://img.icons8.com/ios-filled/50/groups.png" alt="">
+                <span>Gestionar Usuarios</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-5 col-md-5 col-lg-3">
+        <a href="{% url 'panel_productos' %}" class="card card-option text-decoration-none">
+            <div class="card-body">
+                <img src="https://img.icons8.com/ios-filled/50/box.png" alt="">
+                <span>Gestionar Productos</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-5 col-md-5 col-lg-3">
+        <a href="{% url 'panel_personalizacion' %}" class="card card-option text-decoration-none">
+            <div class="card-body">
+                <img src="https://img.icons8.com/ios-filled/50/paint-palette.png" alt="">
+                <span>Gestionar Personalización</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <a href="{% url 'panel_ventas' %}" class="card card-option text-decoration-none">
+            <div class="card-body">
+                <img src="https://img.icons8.com/ios-filled/50/shopping-cart.png" alt="">
+                <span>Gestionar Ventas</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <a href="{% url 'panel_pagos' %}" class="card card-option text-decoration-none">
+            <div class="card-body">
+                <img src="https://img.icons8.com/ios-filled/50/money-transfer.png" alt="">
+                <span>Gestionar Pagos</span>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="catalog-mini">
+    <h3>Catálogo (productos)</h3>
+    <p class="text-muted small mb-3">Gestión de datos maestros usados en productos.</p>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'panel_marcas' %}" class="btn btn-outline-light btn-sm">Marcas</a>
+        <a href="{% url 'panel_colores' %}" class="btn btn-outline-light btn-sm">Colores</a>
+        <a href="{% url 'panel_categorias' %}" class="btn btn-outline-light btn-sm">Categorías</a>
+        <a href="{% url 'panel_generos' %}" class="btn btn-outline-light btn-sm">Géneros</a>
+        <a href="{% url 'panel_tipos_cierre' %}" class="btn btn-outline-light btn-sm">Tipos de cierre</a>
+    </div>
+</div>
+{% endblock %}

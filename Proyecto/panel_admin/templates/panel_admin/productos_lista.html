@@ -1,0 +1,142 @@
+{% extends "panel_admin/base_interior.html" %}
+{% load static %}
+{% block title %}Gestión de Productos — Administrador — Cueromania{% endblock %}
+{% block content %}
+<div class="interior-main-container">
+    <div class="filtros-container">
+        <div class="filtros-titulo">Buscar Productos</div>
+        <div class="filtros-form">
+            <div class="filtro-grupo">
+                <label for="inputNombre">Nombre del producto:</label>
+                <input type="text" id="inputNombre" placeholder="Buscar por nombre..." class="form-control">
+            </div>
+            <div class="filtro-grupo">
+                <label for="selectColor">Color:</label>
+                <select id="selectColor" class="form-select">
+                    <option value="">-- Todos los colores --</option>
+                    {% for c in lista_colores %}
+                    <option value="{{ c.nombre_color|lower }}">{{ c.nombre_color }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" class="btn-buscar" id="btnBuscarProd">Buscar</button>
+            <button type="button" class="btn-limpiar" id="btnLimpiarProd">Limpiar</button>
+        </div>
+    </div>
+
+    <div class="interior-white-panel">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+            <h2 class="interior-title mb-0">Gestión de Productos - Administrador</h2>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'administrador' %}" class="btn-volver">← Volver</a>
+                <a href="{% url 'panel_productos' %}" class="btn-refrescar">Refrescar</a>
+                <a href="{% url 'panel_productos_pdf' %}" class="btn-pdf" target="_blank">Descargar PDF</a>
+                <a href="{% url 'panel_producto_nuevo' %}" class="btn-nuevo-green">+ Nuevo Producto</a>
+            </div>
+        </div>
+
+        {% if productos %}
+        <div class="table-responsive">
+            <table class="table-admin w-100" id="tablaProductos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Marca</th>
+                        <th>Color</th>
+                        <th>Talla</th>
+                        <th>Stock</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyProductos">
+                    {% for p in productos %}
+                    <tr>
+                        <td><strong>#{{ p.id_producto }}</strong></td>
+                        <td>{{ p.nombre }}</td>
+                        <td>{% if p.id_categoria %}{{ p.id_categoria.nombre_categoria }}{% else %}N/A{% endif %}</td>
+                        <td>{% if p.id_marca %}{{ p.id_marca.nombre_marca }}{% else %}N/A{% endif %}</td>
+                        <td>{% if p.id_color %}{{ p.id_color.nombre_color }}{% else %}N/A{% endif %}</td>
+                        <td>{{ p.talla|default:"N/A" }}</td>
+                        <td>
+                            <span class="{% if p.stock_producto < 5 %}stock-bajo{% else %}stock-ok{% endif %}">{{ p.stock_producto }}</span>
+                        </td>
+                        <td><span class="precio-destacado">${{ p.precio }}</span></td>
+                        <td>
+                            {% if p.estado|lower == 'activo' %}
+                            <span class="badge-activo">{{ p.estado }}</span>
+                            {% else %}
+                            <span class="badge-inactivo">{{ p.estado }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="acciones-btns">
+                                <a href="{% url 'panel_producto_editar' p.pk %}" class="btn-accion btn-ver">👁 Ver</a>
+                                <a href="{% url 'panel_producto_editar' p.pk %}" class="btn-accion btn-editar">✏ Editar</a>
+                                <a href="{% url 'panel_producto_eliminar' p.pk %}" class="btn-accion btn-eliminar">🗑 Eliminar</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="contador-resultados">
+            Mostrando <span id="contadorVisibles">{{ productos|length }}</span> de {{ productos|length }} producto(s)
+        </div>
+        {% else %}
+        <div class="sin-datos">
+            <h3>📭 No hay productos registrados</h3>
+            <p>Haz clic en "Nuevo Producto" para agregar el primero.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function() {
+    function filtrarTabla() {
+        var nombre = (document.getElementById('inputNombre') || {}).value.toLowerCase() || '';
+        var color = (document.getElementById('selectColor') || {}).value.toLowerCase() || '';
+        var tbody = document.getElementById('tbodyProductos');
+        if (!tbody) return;
+        var filas = tbody.getElementsByTagName('tr');
+        var contador = 0;
+        for (var i = 0; i < filas.length; i++) {
+            var celdas = filas[i].getElementsByTagName('td');
+            if (celdas.length < 5) continue;
+            var nombreProd = celdas[1].textContent.toLowerCase();
+            var colorProd = celdas[4].textContent.toLowerCase();
+            var mostrar = true;
+            if (nombre !== '' && nombreProd.indexOf(nombre) === -1) mostrar = false;
+            if (color !== '' && colorProd !== color) mostrar = false;
+            filas[i].style.display = mostrar ? '' : 'none';
+            if (mostrar) contador++;
+        }
+        var span = document.getElementById('contadorVisibles');
+        if (span) span.textContent = contador;
+    }
+    function limpiarTodo() {
+        var i = document.getElementById('inputNombre');
+        var s = document.getElementById('selectColor');
+        if (i) i.value = '';
+        if (s) s.value = '';
+        filtrarTabla();
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var inputNombre = document.getElementById('inputNombre');
+        var selectColor = document.getElementById('selectColor');
+        var btnB = document.getElementById('btnBuscarProd');
+        var btnL = document.getElementById('btnLimpiarProd');
+        if (inputNombre) inputNombre.addEventListener('keyup', filtrarTabla);
+        if (selectColor) selectColor.addEventListener('change', filtrarTabla);
+        if (btnB) btnB.addEventListener('click', filtrarTabla);
+        if (btnL) btnL.addEventListener('click', limpiarTodo);
+    });
+})();
+</script>
+{% endblock %}

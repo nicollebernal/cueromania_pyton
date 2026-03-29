@@ -1,0 +1,74 @@
+{% extends "panel_admin/base_interior.html" %}
+{% block title %}Gestión de Ventas — Administrador — Cueromania{% endblock %}
+{% block content %}
+<div class="interior-main-container">
+    <div class="interior-white-panel">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h2 class="interior-title mb-0">Gestión de Ventas - Administrador</h2>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'administrador' %}" class="btn-volver">← Volver</a>
+                <a href="{% url 'panel_ventas' %}" class="btn-refrescar">Refrescar</a>
+                <a href="{% url 'panel_venta_nueva' %}" class="btn-nuevo-green">+ Nueva Venta</a>
+            </div>
+        </div>
+
+        {% if ventas %}
+        <div class="table-responsive">
+            <table class="table-admin w-100">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Productos</th>
+                        <th>Cant.</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in ventas %}
+                    <tr>
+                        <td><strong>#{{ v.id_ventas }}</strong></td>
+                        <td>
+                            <div class="cliente-info">
+                                <div class="fw-semibold text-dark">
+                                    {% if v.id_usuario %}{{ v.id_usuario.primer_nombre }} {{ v.id_usuario.primer_apellido }}{% else %}N/A{% endif %}
+                                </div>
+                                <div class="small text-muted">{% if v.id_usuario %}{{ v.id_usuario.gmail }}{% endif %}</div>
+                            </div>
+                        </td>
+                        <td><div class="small" style="max-width:220px;">{{ v.productos_resumen }}</div></td>
+                        <td><span class="badge bg-secondary">{{ v.cantidad_productos_total }}</span></td>
+                        <td>
+                            <div class="small fw-semibold">{{ v.fecha_ventas|date:"d/m/Y" }}</div>
+                        </td>
+                        <td>
+                            {% with e=v.estado_venta|lower %}
+                            <span class="{% if e == 'pagado' or e == 'entregado' %}badge-pagado{% elif e == 'pendiente' %}badge-pendiente{% elif e == 'cancelado' %}badge-cancelado{% else %}badge-pendiente{% endif %}">{{ v.estado_venta }}</span>
+                            {% endwith %}
+                        </td>
+                        <td><span class="precio-destacado">${{ v.total|floatformat:2 }}</span></td>
+                        <td>
+                            <div class="acciones-btns">
+                                <a href="{% url 'panel_venta_ver' v.pk %}" class="btn-accion btn-ver">Ver</a>
+                                <a href="{% url 'panel_venta_editar' v.pk %}" class="btn-accion btn-editar">Editar</a>
+                                <a href="{% url 'panel_venta_eliminar' v.pk %}" class="btn-accion btn-eliminar"
+                                   onclick="return confirm('¿Seguro que deseas eliminar esta venta?');">Eliminar</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="sin-datos">
+            <h3>📭 No hay ventas registradas</h3>
+            <p>Las ventas aparecerán aquí cuando los clientes realicen compras.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

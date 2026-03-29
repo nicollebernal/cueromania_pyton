@@ -1,0 +1,16 @@
+{% extends "panel_admin/base_interior.html" %}
+{% block title %}{{ titulo }} — Administración{% endblock %}
+{% block content %}
+<div class="interior-narrow">
+    <div class="interior-white-panel">
+        <h2 class="interior-title">{{ titulo }}</h2>
+        <p>¿Confirma eliminar <strong>{{ objeto }}</strong>?</p>
+        <p class="text-muted small">Esta acción no se puede deshacer. Si existen productos u otros registros enlazados, puede fallar por restricciones de la base de datos.</p>
+        <form method="post" class="mt-3">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            <a href="{% url volver %}" class="btn btn-secondary ms-2">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

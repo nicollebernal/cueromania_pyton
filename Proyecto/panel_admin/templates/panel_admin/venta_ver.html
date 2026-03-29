@@ -1,0 +1,66 @@
+{% extends "panel_admin/base_interior.html" %}
+{% block title %}Detalle de Venta #{{ venta.id_ventas }} — Cueromania{% endblock %}
+{% block content %}
+<div class="interior-narrow">
+    <div class="interior-white-panel">
+        <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-4" style="border-color:#8d1b2e !important;">
+            <div>
+                <h1 class="h3 mb-1" style="color:#8d1b2e;">Cueromania</h1>
+                <p class="text-muted small mb-0">Detalle de venta</p>
+            </div>
+            <div class="text-end">
+                <div class="h5 mb-0" style="color:#8d1b2e;">#{{ venta.id_ventas }}</div>
+                <div class="small text-muted">{{ venta.fecha_ventas|date:"d/m/Y" }}</div>
+            </div>
+        </div>
+
+        <div class="p-3 mb-4 rounded" style="background:#f8f9fa;">
+            <h3 class="h6 text-uppercase text-muted">Cliente</h3>
+            {% if venta.id_usuario %}
+            <p class="mb-0 fw-semibold">{{ venta.id_usuario.primer_nombre }} {{ venta.id_usuario.primer_apellido }}</p>
+            <p class="small text-muted mb-0">{{ venta.id_usuario.gmail }} · {{ venta.id_usuario.contacto }}</p>
+            {% else %}
+            <p class="mb-0">N/A</p>
+            {% endif %}
+        </div>
+
+        <h3 class="h6" style="color:#8d1b2e;">Productos</h3>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>P. unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in venta.detalles.all %}
+                    <tr>
+                        <td>{% if d.id_producto %}{{ d.id_producto.nombre }}{% else %}—{% endif %}</td>
+                        <td>{{ d.cantidad }}</td>
+                        <td>${{ d.precio_unitario|floatformat:2 }}</td>
+                        <td>${{ d.cantidad_pagada|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-muted text-center">Sin líneas de detalle.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="{% with e=venta.estado_venta|lower %}{% if e == 'pagado' or e == 'entregado' %}badge-pagado{% elif e == 'cancelado' %}badge-cancelado{% else %}badge-pendiente{% endif %}{% endwith %}">{{ venta.estado_venta }}</span>
+            </div>
+            <div class="fs-5 fw-bold text-success">Total: ${{ venta.total|floatformat:2 }}</div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <a href="{% url 'panel_ventas' %}" class="btn-volver">← Volver</a>
+            <a href="{% url 'panel_venta_editar' venta.pk %}" class="btn btn-warning">Editar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

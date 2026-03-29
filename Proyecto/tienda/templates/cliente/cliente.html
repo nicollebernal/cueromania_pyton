@@ -55,11 +55,7 @@
             {% for producto in productos %}
             <div class="col-md-4 mb-4">
                 <div class="card producto-card shadow-sm h-100">
-                    {% if producto.imagen %}
-                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="card-img-top">
-                {% else %}
-                    <img src="{% static 'img/placeholder.png' %}" alt="Imagen no disponible" class="card-img-top">
-                {% endif %}
+                    <img src="{% static 'img/placeholder.png' %}" alt="{{ producto.nombre }}" class="card-img-top">
 
                     <div class="card-body">
                         <h5 class="card-title">{{ producto.nombre }}</h5>

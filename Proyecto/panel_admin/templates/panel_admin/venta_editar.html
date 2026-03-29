@@ -1,0 +1,62 @@
+{% extends "panel_admin/base_interior.html" %}
+{% block title %}Editar Venta #{{ venta.id_ventas }} — Cueromania{% endblock %}
+{% block content %}
+<div class="interior-narrow">
+    <div class="form-container-interior panel-card-form">
+        <h2 class="interior-title text-center">Editar venta #{{ venta.id_ventas }}</h2>
+
+        <div class="panel-resumen-montos mb-4">
+            <div class="panel-resumen-caja panel-resumen-caja--destacado">
+                <div class="etiqueta">Total de la venta (valor en el formulario)</div>
+                <div class="valor" id="js-resumen-total-venta">${{ venta.total|floatformat:2 }}</div>
+            </div>
+        </div>
+
+        <div class="panel-info-cliente mb-3 small">
+            <strong>Cliente:</strong>
+            {% if venta.id_usuario %}{{ venta.id_usuario.primer_nombre }} {{ venta.id_usuario.primer_apellido }} ({{ venta.id_usuario.gmail }}){% else %}—{% endif %}
+        </div>
+
+        <form method="post" class="row g-3 panel-form-montos" id="form-venta-editar">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="col-md-6">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for err in field.errors %}<div class="text-warning small">{{ err }}</div>{% endfor %}
+            </div>
+            {% endfor %}
+            <div class="col-12 mt-4 d-flex justify-content-between flex-wrap gap-2">
+                <a href="{% url 'panel_ventas' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-panel-primario px-4">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function() {
+    function fmt(n) {
+        if (n === '' || n === null || isNaN(n)) return '—';
+        var x = parseFloat(String(n).replace(',', '.'));
+        if (isNaN(x)) return '—';
+        return x.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function sync() {
+        var inp = document.querySelector('#form-venta-editar input[name="total"]');
+        var el = document.getElementById('js-resumen-total-venta');
+        if (inp && el) el.textContent = '$' + fmt(inp.value);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var inp = document.querySelector('#form-venta-editar input[name="total"]');
+        if (inp) {
+            inp.addEventListener('input', sync);
+            inp.addEventListener('change', sync);
+        }
+        sync();
+    });
+})();
+</script>
+{% endblock %}

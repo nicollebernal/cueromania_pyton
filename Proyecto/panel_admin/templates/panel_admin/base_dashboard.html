@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Panel de Administración — Cueromania{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'panel_admin/panel.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="admin-jsf admin-dashboard-body">
+    <nav class="admin-sidebar" aria-label="Menú principal">
+        <div class="px-3 mb-4">
+            <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" class="sidebar-logo" width="120" height="60" onerror="this.style.display='none'">
+        </div>
+        <ul class="nav flex-column admin-sidebar-nav">
+            <li><a class="nav-link" href="{% url 'panel_usuarios' %}">Usuarios</a></li>
+            <li><a class="nav-link" href="{% url 'panel_productos' %}">Productos</a></li>
+            <li><a class="nav-link" href="{% url 'panel_personalizacion' %}">Personalización</a></li>
+            <li><a class="nav-link" href="{% url 'panel_ventas' %}">Ventas</a></li>
+            <li><a class="nav-link" href="{% url 'panel_pagos' %}">Pagos</a></li>
+        </ul>
+        <div class="sidebar-footer mt-auto p-3">
+            <form action="{% url 'panel_salir' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout w-100">Cerrar Sesión</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="admin-main-wrap">
+        <header class="admin-top-header">
+            <div class="logo-header">
+                <img src="{% static 'img/logo.jpeg' %}" alt="Logo" width="50" height="50" style="border-radius:10px;" onerror="this.style.display='none'">
+                <h2>Cueromania</h2>
+            </div>
+            <div class="user-info">
+                <span>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</span>
+                <img src="https://img.icons8.com/ios-glyphs/30/user--v1.png" alt="" width="30" height="30">
+            </div>
+        </header>
+
+        <div class="admin-dashboard-content content-area container-fluid">
+            {% if messages %}
+            {% for message in messages %}
+            {% with lvl=message.level_tag %}
+            <div class="alert alert-{% if lvl == 'error' %}danger{% elif lvl == 'debug' %}secondary{% else %}{{ lvl }}{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+            {% endwith %}
+            {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+
+        <footer class="admin-footer">
+            <p>Cueromania S.A.S. | Tel: +57 312 456 7890 | servicio@cueromania.com</p>
+            <p>Dirección: Calle 123 #45-67, Ciudad Colombia</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
