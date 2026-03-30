@@ -1,8 +1,8 @@
-
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
+
 <header class="container1 d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center">
         <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" width="50" height="50">
@@ -11,43 +11,68 @@
 </header>
      
 <div class="container py-5">
-    <h1 class="text-center">Carrito de Compras</h1>
-    <div class="row justify-content-center">
+    <h1 class="text-center mb-4">Carrito de Compras</h1>
+
+    <div class="row">
+        
         <div class="col-md-8">
             {% if productos %}
-            <table class="table table-bordered mt-4">
-                <thead class="table-light">
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th>
-                        <th>Total</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="table-group-divider">
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.nombre }}</td>
-                        <td>${{ producto.precio }}</td>
-                        <td>{{ producto.cantidad }}</td>
-                        <td>${{total }}</td>
-                        <td align="center">
-                        <a href="{% url 'editar' producto.id_producto %}" class="btn btn-warning">Editar</a>
-                        <a href="{% url 'eliminar' producto.id_producto %}" class="btn btn-danger">Eliminar</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
 
-            <div class="d-flex justify-content-end mt-4">
-                <h4>Total: ${{ total }}</h4>
-            </div>
+                {% for producto in productos %}
+                <div class="cart-item">
+
+                    <div class="cart-img">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}">
+                        {% else %}
+                            <img src="{% static 'img/placeholder.png' %}">
+                        {% endif %}
+                    </div>
+
+                    <div class="cart-info">
+                        <h6 class="mb-1">{{ producto.nombre }}</h6>
+                        <small>Talla: {{ producto.talla }}</small>
+                        <div class="cart-precio">
+                            ${{ producto.precio }}
+                        </div>
+                    </div>
+
+                    <div class="cart-cantidad">
+                        <label>Cantidad:</label>
+                        <input type="number" value="{{ producto.cantidad }}" min="1">
+                    </div>
+
+                    <div class="cart-subtotal">
+                        <label>Subtotal:</label>
+                        <p>${{ producto.total_carrito }}</p>
+                    </div>
+
+                    <div class="cart-delete">
+                        <a href="{% url 'eliminar' producto.id_producto %}">✖</a>
+                    </div>
+
+                </div>
+                <hr>
+                {% endfor %}
 
             {% else %}
-            <p class="text-center mt-4">Tu carrito está vacío.</p>
+                <p class="text-center mt-4">Tu carrito está vacío.</p>
             {% endif %}
         </div>
+
+        {% if productos %}
+        <div class="col-md-4">
+            <div class="card p-4 shadow-sm">
+                <h5>Total</h5>
+                <h3 class="fw-bold">${{ total }}</h3>
+
+                <button class="btn btn-dark w-100 mt-3">
+                    Hacer Pedido
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 </div>
 

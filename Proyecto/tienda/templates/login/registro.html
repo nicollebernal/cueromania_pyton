@@ -1,23 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Registro</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <style>
+        :root {
+            --color-fondo-oscuro: #0f1113;
+            --color-fondo-claro: #1f2428;
+            --color-vino: #7a0c14;
+            --color-rojo: #b71c1c;
+            --color-rojo-intenso: #c62828;
+            --color-texto-claro: #ddd;
+            --color-error: #e57373;
+        }
+
+        body {
+            background: radial-gradient(circle at top, var(--color-fondo-claro), var(--color-fondo-oscuro));
+            color: var(--color-texto-claro);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .registro-box {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            background: rgba(18, 20, 23, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-vino);
+            box-shadow: 0 0 20px rgba(122, 12, 20, 0.9), 0 0 40px rgba(122, 12, 20, 0.6), 0 0 80px rgba(122, 12, 20, 0.4);
+            padding: 2rem;
+        }
+
+        h3 {
+            color: var(--color-rojo-intenso);
+            font-weight: bold;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: var(--color-texto-claro);
+            transition: 0.3s ease;
+        }
+
+        .form-control:focus {
+            border: 1px solid var(--color-rojo);
+            box-shadow: 0 0 6px var(--color-rojo);
+            outline: none;
+        }
+
+        .btn-registro {
+            background: linear-gradient(135deg, var(--color-vino), var(--color-rojo-intenso));
+            border-radius: 12px;
+            color: white;
+            border: none;
+            transition: 0.3s ease;
+        }
+
+        .btn-registro:hover {
+            background: linear-gradient(135deg, var(--color-rojo-intenso), var(--color-vino));
+            transform: scale(1.02);
+        }
+    </style>
 </head>
 <body>
-    <h2>Registro de Usuario</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="id_usuario" placeholder="Cédula" required><br>
-        <input type="text" name="primer_nombre" placeholder="Primer nombre" required><br>
-        <input type="text" name="segundo_nombre" placeholder="Segundo nombre"><br>
-        <input type="text" name="primer_apellido" placeholder="Primer apellido" required><br>
-        <input type="text" name="segundo_apellido" placeholder="Segundo apellido"><br>
-        <input type="text" name="direccion" placeholder="Dirección"><br>
-        <input type="text" name="contacto" placeholder="Contacto"><br>
-        <input type="email" name="gmail" placeholder="Correo electrónico" required><br>
-        <input type="password" name="clave" placeholder="Contraseña" required><br>
-
-        <button type="submit">Registrar</button>
-    </form>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow registro-box">
+        <h3 class="text-center mb-4">Registro de Usuario</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="id_usuario" class="form-control" placeholder="Cédula" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="contacto" class="form-control" placeholder="Contacto">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="primer_nombre" class="form-control" placeholder="Primer nombre" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="segundo_nombre" class="form-control" placeholder="Segundo nombre">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="primer_apellido" class="form-control" placeholder="Primer apellido" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="segundo_apellido" class="form-control" placeholder="Segundo apellido">
+                </div>
+            </div>
+            <div class="mb-3">
+                <input type="text" name="direccion" class="form-control" placeholder="Dirección">
+            </div>
+            <div class="mb-3">
+                <input type="email" name="gmail" class="form-control" placeholder="Correo electrónico" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" name="clave" class="form-control" placeholder="Contraseña" required>
+            </div>
+            <button type="submit" class="btn btn-registro w-100">Registrarse</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>

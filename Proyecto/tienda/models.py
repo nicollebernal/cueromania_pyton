@@ -142,6 +142,7 @@ class Producto (models.Model):
     nombre = models.CharField(max_length=100)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     talla = models.CharField(max_length=20)
+    imagen = models.ImageField(upload_to='productos/', blank=True, null=True, db_column='imagen')
     estado = models.CharField(max_length=20)
     stock_producto = models.IntegerField()
     descripcion = models.TextField()
@@ -159,7 +160,6 @@ class Producto (models.Model):
 
 class Venta(models.Model):
     id_ventas = models.AutoField(primary_key=True)
-    # Solo fecha: evita conflictos con MySQL DATE/DATETIME y timezone.is_aware en plantillas
     fecha_ventas = models.DateField()
     estado_venta = models.CharField(max_length=50)
     total = models.DecimalField(max_digits=12, decimal_places=2, db_column='Total')

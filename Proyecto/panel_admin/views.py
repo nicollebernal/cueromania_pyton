@@ -60,7 +60,7 @@ def cerrar_sesion(request):
     return redirect('login')
 
 
-# ——— Productos ———
+
 
 
 @solo_administrador
@@ -197,7 +197,6 @@ def producto_eliminar(request, pk):
     )
 
 
-# ——— Usuarios ———
 
 
 @solo_administrador
@@ -267,7 +266,6 @@ def usuario_eliminar(request, pk):
     )
 
 
-# ——— Catálogos ———
 
 
 @solo_administrador

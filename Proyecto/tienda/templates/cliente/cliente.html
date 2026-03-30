@@ -16,14 +16,11 @@
             <h3 class="mb-0 ms-2">Cueromania</h3>
         </div>
         <div class="search-bar">
-           
             <form action="{% url 'filtrar_producto'%}" method="GET" class="d-flex">
                 <input type="text" id="q" name="q" placeholder="Buscar productos..." value="{{ query|default_if_none:'' }}" required>
                 <button type="submit" class="btn btn-comprar ms-2">Buscar</button>
             </form>
-            
         </div>
-        
 
         <div class="usuario-nombre d-flex align-items-center">
             <svg class="bi bi-cart ms-3" style="margin-right: 20px;" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
@@ -31,7 +28,7 @@
             </svg>
             
             <img src="{% static 'img/icono.png' %}" alt="Usuario" width="40" height="40" class="me-2">
-                {{ usuario.primer_nombre }} {{ usuario.primer_apellido }}
+            {{ usuario.primer_nombre }} {{ usuario.primer_apellido }}
             <ul class="menu_list">
                 <li class="menu_item"><a href="{% url 'cliente' %}" class="menu_link">Perfil</a></li>
                 <li class="menu_item"><a href="{% url 'login' %}" class="menu_link">Cerrar Sesión</a></li>
@@ -55,23 +52,26 @@
             {% for producto in productos %}
             <div class="col-md-4 mb-4">
                 <div class="card producto-card shadow-sm h-100">
-                    <img src="{% static 'img/placeholder.png' %}" alt="{{ producto.nombre }}" class="card-img-top">
+                    
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    {% else %}
+                        <img src="{% static 'img/placeholder.png' %}" alt="{{ producto.nombre }}">
+                    {% endif %}
 
                     <div class="card-body">
                         <h5 class="card-title">{{ producto.nombre }}</h5>
                         <p class="card-text text-muted">{{ producto.descripcion }}</p>
-                        <h4 class="precio fw-bold"style = " position: relative;  top: 10%;">${{ producto.precio }}</h4>
-                        <div class="d-flex align-items-center gap-2" style = " position: relative; left: 70%; top: -20%; ">
-                            <button class="btn btn-sm " onclick="restar({{ producto.id_producto }})">-</button>
+                        <h4 class="precio fw-bold" style="position: relative; top: 10%;">${{ producto.precio }}</h4>
+                        <div class="d-flex align-items-center gap-2" style="position: relative; left: 70%; top: -20%;">
+                            <button class="btn btn-sm" onclick="restar({{ producto.id_producto }})">-</button>
                             <span id="cantidad-{{ producto.id_producto }}" class="mx-2">{{ producto.cantidad_en_carro }}</span>
-                            <button class="btn btn-sm " onclick="sumar({{ producto.id_producto }})">+</button>
+                            <button class="btn btn-sm" onclick="sumar({{ producto.id_producto }})">+</button>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent border-0">
                         <a href="/carrito/agregar/{{ producto.id_producto }}/" class="btn btn-comprar w-100">Agregar al carrito</a>
-                        
                     </div>
-            
                 </div>
             </div>
             {% endfor %}
