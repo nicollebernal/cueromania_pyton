@@ -8,6 +8,8 @@ urlpatterns = [
    path ('', views.login_view, name='login'),
    path  ('administrador/', include('panel_admin.urls')),
    path  ('empleado/', views.empleado_dashboard, name='empleado'),
+   path ('personalizacion/', views.personalizacion, name='personalizacion'),
+   path ('crear_personalizacion/', views.crear_personalizacion, name='crear_personalizacion'),
    path ('registrar_usuario/', views.registrar_usuario, name ='registrar_usuario'),
    path  ('cliente/', views.cliente_dashboard, name='cliente'),
    path('<int:producto_id>/', views.agregar, name='agregar'),

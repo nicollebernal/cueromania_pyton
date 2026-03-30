@@ -1,5 +1,7 @@
+from datetime import date
+
 from django.shortcuts import render, redirect
-from .models import Usuario, Producto, Rol
+from .models import Usuario, Producto, Rol, Personalizacion, categoria, colores, marcas, genero
 from django.contrib.auth.hashers import make_password
 from Carrito.carro import Carro
 
@@ -124,3 +126,72 @@ def registrar_usuario(request):
 
     roles = Rol.objects.all()
     return render(request, 'login/registro.html', {'roles': roles})
+
+
+def personalizacion(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+    personalizaciones = Personalizacion.objects.filter(id_usuario=usuario)
+
+    categorias = categoria.objects.all()
+    colores_lista = colores.objects.all()
+    marcas_lista = marcas.objects.all()
+    generos_lista = genero.objects.all()
+
+    return render(request, 'cliente/personalizacion.html', {
+        'usuario': usuario,
+        'personalizaciones': personalizaciones,
+        'categorias': categorias,
+        'colores': colores_lista,
+        'marcas': marcas_lista,
+        'generos': generos_lista,
+    })
+
+
+def crear_personalizacion(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+
+    if request.method == 'POST':
+        descripcion = request.POST.get('descripcion', '').strip()
+        fecha_solicitud = request.POST.get('fecha_solicitud')
+        if fecha_solicitud:
+            try:
+                fecha_solicitud = date.fromisoformat(fecha_solicitud)
+            except ValueError:
+                fecha_solicitud = date.today()
+        else:
+            fecha_solicitud = date.today()
+
+        categoria_id = request.POST.get('id_categoria')
+        color_id = request.POST.get('id_color')
+        marca_id = request.POST.get('id_marca')
+        genero_id = request.POST.get('id_genero')
+        imagen_personalizacion = request.FILES.get('imagen_personalizacion')
+
+        try:
+            categoria_obj = categoria.objects.get(pk=categoria_id)
+            color_obj = colores.objects.get(pk=color_id)
+            marca_obj = marcas.objects.get(pk=marca_id)
+            genero_obj = genero.objects.get(pk=genero_id)
+        except (categoria.DoesNotExist, colores.DoesNotExist, marcas.DoesNotExist, genero.DoesNotExist, TypeError, ValueError):
+            return redirect('personalizacion')
+
+        Personalizacion.objects.create(
+            id_usuario=usuario,
+            descripcion=descripcion,
+            imagen_personalizacion=imagen_personalizacion,
+            fecha_solicitud=fecha_solicitud,
+            id_categoria=categoria_obj,
+            id_color=color_obj,
+            id_marca=marca_obj,
+            id_genero=genero_obj,
+        )
+
+    return redirect('personalizacion')

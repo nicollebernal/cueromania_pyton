@@ -1,0 +1,98 @@
+{% extends "cliente/cliente.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm p-4">
+                <h2 class="mb-3">Crear solicitud de personalización</h2>
+                <form action="{% url 'crear_personalizacion' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea id="descripcion" name="descripcion" class="form-control" rows="4" required>{{ request.POST.descripcion }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="imagen_personalizacion" class="form-label">Imagen (opcional)</label>
+                        <input id="imagen_personalizacion" name="imagen_personalizacion" type="file" class="form-control">
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="fecha_solicitud" class="form-label">Fecha de solicitud</label>
+                            <input id="fecha_solicitud" name="fecha_solicitud" type="date" class="form-control" value="{{ request.POST.fecha_solicitud|default:None }}">
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="id_categoria" class="form-label">Categoría</label>
+                            <select id="id_categoria" name="id_categoria" class="form-select" required>
+                                <option value="">Selecciona una categoría</option>
+                                {% for cat in categorias %}
+                                    <option value="{{ cat.pk }}">{{ cat.nombre_categoria }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="id_color" class="form-label">Color</label>
+                            <select id="id_color" name="id_color" class="form-select" required>
+                                <option value="">Selecciona un color</option>
+                                {% for color in colores %}
+                                    <option value="{{ color.pk }}">{{ color.nombre_color }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="id_marca" class="form-label">Marca</label>
+                            <select id="id_marca" name="id_marca" class="form-select" required>
+                                <option value="">Selecciona una marca</option>
+                                {% for marca in marcas %}
+                                    <option value="{{ marca.pk }}">{{ marca.nombre_marca }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_genero" class="form-label">Género</label>
+                        <select id="id_genero" name="id_genero" class="form-select" required>
+                            <option value="">Selecciona un género</option>
+                            {% for g in generos %}
+                                <option value="{{ g.pk }}">{{ g.nombre_genero }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-comprar w-100">Enviar solicitud</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm p-4">
+                <h2 class="mb-3">Tus solicitudes</h2>
+                {% if personalizaciones %}
+                    <div class="list-group">
+                        {% for p in personalizaciones %}
+                            <div class="list-group-item mb-3">
+                                <h5>Solicitud #{{ forloop.counter }}</h5>
+                                <p><strong>Fecha:</strong> {{ p.fecha_solicitud|date:"d/m/Y" }}</p>
+                                <p><strong>Categoría:</strong> {{ p.id_categoria.nombre_categoria }}</p>
+                                <p><strong>Color:</strong> {{ p.id_color.nombre_color }}</p>
+                                <p><strong>Marca:</strong> {{ p.id_marca.nombre_marca }}</p>
+                                <p><strong>Género:</strong> {{ p.id_genero.nombre_genero }}</p>
+                                <p>{{ p.descripcion }}</p>
+                                {% if p.imagen_personalizacion %}
+                                    <img src="{{ p.imagen_personalizacion.url }}" alt="Imagen solicitud" class="img-fluid rounded" style="max-height: 220px;">
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No tienes solicitudes de personalización aún.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

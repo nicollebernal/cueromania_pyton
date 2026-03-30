@@ -32,7 +32,7 @@
                 <tbody>
                     {% for p in items %}
                     <tr>
-                        <td><strong>#{{ p.id_personalizacion }}</strong></td>
+                        <td><strong>#{{ forloop.counter }}</strong></td>
                         <td>
                             {% if p.imagen_personalizacion %}
                             <img src="{{ p.imagen_personalizacion.url }}" alt="" class="img-personalizacion js-zoom-img">

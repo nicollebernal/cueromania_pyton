@@ -39,13 +39,14 @@
     <nav class="d-flex align-items-center justify-content-center py-3">
         <ul class="nav">
             <li class="nav-item"><a class="menu-link" href="{% url 'cliente' %}">Inicio </a></li>
-            <li class="nav-item"><a class="menu-link">Acerca de nosotros</a></li>
-            <li class="nav-item"><a class="menu-link">Personalización</a></li>
-            <li class="nav-item"><a class="menu-link">Contacto</a></li>
+            <li class="nav-item"><a class="menu-link" href="">Acerca de nosotros</a></li>
+            <li class="nav-item"><a class="menu-link" href="{% url 'personalizacion' %}">Personalización</a></li>
+            <li class="nav-item"><a class="menu-link" href="">Contacto</a></li>
         </ul>
     </nav>
 
     <main class="container py-5">
+        {% block content %}
         <h1 class="text-center">Bienvenido a Cueromania</h1>
         <p class="text-center subtitulo">Descubre nuestra exclusiva colección de artículos de cuero</p>
         <div class="row">
@@ -76,6 +77,7 @@
             </div>
             {% endfor %}
         </div>
+        {% endblock %}
     </main>
 
     <footer class="text-center py-4">
