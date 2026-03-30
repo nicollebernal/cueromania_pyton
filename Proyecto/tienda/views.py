@@ -23,7 +23,7 @@ def login_view(request):
         if not usuario.verificar_clave(clave):
             return render(request, 'login/login.html', {'error': 'Contraseña incorrecta'})
 
-        # Si la BD tenía texto plano o MD5, migrar a hash Django una sola vez
+       
         usuario.migrar_clave_a_hash_django(clave)
 
         request.session['usuario_id'] = usuario.id_usuario
