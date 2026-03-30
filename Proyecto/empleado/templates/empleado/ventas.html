@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ventas Presenciales</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Ventas Presenciales</h2>
+            <p class="mb-0">
+                Empleado: <strong>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</strong>
+            </p>
+        </div>
+
+        <a href="{% url 'empleado' %}" class="btn btn-secondary">
+            ⬅ Regresar al Panel Principal
+        </a>
+    </div>
+
+    <div class="card shadow p-4">
+        <h4 class="mb-3">Productos disponibles para vender</h4>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td>${{ producto.precio }}</td>
+                        <td>{{ producto.stock_producto }}</td>
+                        <td>
+                            <button class="btn btn-success btn-sm">Vender</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No hay productos disponibles.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert alert-info mt-3">
+            Aquí luego conectamos el registro real de la venta (cliente, cantidad, total, descuento, método de pago).
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
