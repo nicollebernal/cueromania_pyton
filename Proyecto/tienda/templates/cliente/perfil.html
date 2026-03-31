@@ -1,0 +1,65 @@
+{% extends "cliente/cliente.html" %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm p-4">
+                <h2 class="mb-4">Mi perfil</h2>
+
+                {% if mensaje %}
+                    <div class="alert alert-success" role="alert">
+                        {{ mensaje }}
+                    </div>
+                {% endif %}
+
+                <form action="{% url 'perfil' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Cédula</label>
+                        <input type="text" class="form-control" value="{{ usuario.id_usuario }}" readonly>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="primer_nombre" class="form-label">Primer nombre</label>
+                            <input id="primer_nombre" name="primer_nombre" type="text" class="form-control" value="{{ usuario.primer_nombre }}" required>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="segundo_nombre" class="form-label">Segundo nombre</label>
+                            <input id="segundo_nombre" name="segundo_nombre" type="text" class="form-control" value="{{ usuario.segundo_nombre }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="primer_apellido" class="form-label">Primer apellido</label>
+                            <input id="primer_apellido" name="primer_apellido" type="text" class="form-control" value="{{ usuario.primer_apellido }}" required>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="segundo_apellido" class="form-label">Segundo apellido</label>
+                            <input id="segundo_apellido" name="segundo_apellido" type="text" class="form-control" value="{{ usuario.segundo_apellido }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="gmail" class="form-label">Correo electrónico</label>
+                        <input id="gmail" name="gmail" type="email" class="form-control" value="{{ usuario.gmail }}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input id="direccion" name="direccion" type="text" class="form-control" value="{{ usuario.direccion }}" required>
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="contacto" class="form-label">Contacto</label>
+                            <input id="contacto" name="contacto" type="text" class="form-control" value="{{ usuario.contacto }}" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-comprar w-100">Guardar cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

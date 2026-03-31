@@ -30,7 +30,7 @@
             <img src="{% static 'img/icono.png' %}" alt="Usuario" width="40" height="40" class="me-2">
             {{ usuario.primer_nombre }} {{ usuario.primer_apellido }}
             <ul class="menu_list">
-                <li class="menu_item"><a href="{% url 'cliente' %}" class="menu_link">Perfil</a></li>
+                <li class="menu_item"><a href="{% url 'perfil' %}" class="menu_link">Perfil</a></li>
                 <li class="menu_item"><a href="{% url 'login' %}" class="menu_link">Cerrar Sesión</a></li>
             </ul>
         </div>

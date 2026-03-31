@@ -61,6 +61,31 @@ def cliente_dashboard(request):
     })
 
 
+def cliente_perfil(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+    mensaje = ''
+
+    if request.method == 'POST':
+        usuario.primer_nombre = request.POST.get('primer_nombre', usuario.primer_nombre).strip()
+        usuario.segundo_nombre = request.POST.get('segundo_nombre', usuario.segundo_nombre).strip()
+        usuario.primer_apellido = request.POST.get('primer_apellido', usuario.primer_apellido).strip()
+        usuario.segundo_apellido = request.POST.get('segundo_apellido', usuario.segundo_apellido).strip()
+        usuario.direccion = request.POST.get('direccion', usuario.direccion).strip()
+        usuario.contacto = request.POST.get('contacto', usuario.contacto).strip()
+        usuario.gmail = request.POST.get('gmail', usuario.gmail).strip()
+        usuario.save(update_fields=['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido', 'direccion', 'contacto', 'gmail'])
+        mensaje = 'Perfil actualizado correctamente.'
+
+    return render(request, 'cliente/perfil.html', {
+        'usuario': usuario,
+        'mensaje': mensaje,
+    })
+
+
 def lista_productos(request):
     productos = Producto.objects.all()
     return render(request, 'cliente/cliente.html', {
