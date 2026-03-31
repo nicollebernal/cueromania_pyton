@@ -21,70 +21,129 @@
         </a>
     </div>
 
-    <div class="card shadow p-4">
-        <h4 class="mb-3">Registrar nuevo pedido personalizado</h4>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
-        <form method="POST">
+    <!-- Formulario para crear personalización -->
+    <div class="card shadow p-4 mb-4">
+        <h4 class="mb-3">Registrar nueva personalización</h4>
+
+        <form method="POST" action="{% url 'guardar_personalizacion' %}" enctype="multipart/form-data">
             {% csrf_token %}
 
             <div class="mb-3">
-                <label class="form-label">Nombre del cliente</label>
-                <input type="text" class="form-control" name="cliente_nombre" required>
+                <label class="form-label">Descripción de Personalización *</label>
+                <textarea class="form-control" name="descripcion" rows="3" placeholder="Color, talla, estampado, diseño, texto, etc." required></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Categoría *</label>
+                    <select class="form-control" name="id_categoria" required>
+                        <option>Seleccione una categoría</option>
+                        {% for cat in categorias %}
+                            <option value="{{ cat.id_categoria }}">{{ cat.nombre_categoria }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Marca *</label>
+                    <select class="form-control" name="id_marca" required>
+                        <option>Seleccione una marca</option>
+                        {% for marc in marcas %}
+                            <option value="{{ marc.id_marca }}">{{ marc.nombre_marca }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Color *</label>
+                    <select class="form-control" name="id_color" required>
+                        <option>Seleccione un color</option>
+                        {% for col in colores %}
+                            <option value="{{ col.id_color }}">{{ col.nombre_color }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Género *</label>
+                    <select class="form-control" name="id_genero" required>
+                        <option>Seleccione un género</option>
+                        {% for gen in generos %}
+                            <option value="{{ gen.id_genero }}">{{ gen.nombre_genero }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Producto solicitado</label>
-                <input type="text" class="form-control" name="producto_solicitado" required>
+                <label class="form-label">Imagen de Referencia</label>
+                <input type="file" class="form-control" name="imagen_personalizacion" accept="image/*">
+                <small class="text-muted">Puedes subir una imagen de referencia para la personalización</small>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Detalles de personalización</label>
-                <textarea class="form-control" name="detalles" rows="4" placeholder="Color, talla, estampado, diseño, texto, etc." required></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Fecha de entrega estimada</label>
-                <input type="date" class="form-control" name="fecha_entrega">
-            </div>
-
-            <button type="submit" class="btn btn-warning">Guardar Pedido</button>
+            <button type="submit" class="btn btn-success">Guardar Personalización</button>
         </form>
-        </div>
     </div>
-</div>
-<hr class="my-4">
 
-<h4 class="mb-3">Pedidos Registrados</h4>
+    <hr class="my-4">
 
-<div class="table-responsive">
-    <table class="table table-bordered table-hover bg-white">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Cliente</th>
-                <th>Producto</th>
-                <th>Detalles</th>
-                <th>Entrega</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pedido in pedidos %}
-            <tr>
-                <td>{{ pedido.id_pedido }}</td>
-                <td>{{ pedido.cliente_nombre }}</td>
-                <td>{{ pedido.producto_solicitado }}</td>
-                <td>{{ pedido.detalles }}</td>
-                <td>{{ pedido.fecha_entrega }}</td>
-                <td>{{ pedido.estado }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center">No hay pedidos registrados.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Registro de personalización -->
+    <h4 class="mb-3">Registro de Personalización</h4>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Descripción</th>
+                    <th>Imagen</th>
+                    <th>Categoría</th>
+                    <th>Marca</th>
+                    <th>Fecha Solicitud</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td>{{ pedido.id_personalizacion }}</td>
+                    <td>{{ pedido.descripcion|truncatewords:10 }}</td>
+                    <td>
+                        {% if pedido.imagen_personalizacion %}
+                            <img src="{{ pedido.imagen_personalizacion.url }}" width="50" height="50" style="object-fit: cover; border-radius: 3px;">
+                        {% else %}
+                            <span class="text-muted">Sin imagen</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ pedido.id_categoria.nombre_categoria }}</td>
+                    <td>{{ pedido.id_marca.nombre_marca }}</td>
+                    <td>{{ pedido.fecha_solicitud|date:"d/m/Y" }}</td>
+                    <td>
+                        <a href="{% url 'editar_personalizacion' pedido.id_personalizacion %}" class="btn btn-warning btn-sm">
+                            ✎ Editar
+                        </a>
+                        <form method="POST" action="{% url 'eliminar_personalizacion' pedido.id_personalizacion %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta personalización?')">
+                                🗑 Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No hay personalización registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 </body>

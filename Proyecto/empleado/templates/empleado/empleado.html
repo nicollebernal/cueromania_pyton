@@ -1,38 +1,81 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Empleado</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Empleado — Cueromania</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'panel_admin/panel.css' %}">
+    <style>
+        .empleado-sidebar { background-color: #1f1f1f; width: 250px; min-height: 100vh; padding: 20px; }
+        .empleado-main { flex-grow: 1; display: flex; flex-direction: column; }
+    </style>
 </head>
-<body class="bg-light">
-
-<div class="container mt-5">
-    <div class="card shadow-lg p-4 text-center">
-        <h2 class="mb-3">Panel Principal del Empleado</h2>
-        <p class="mb-4">
-            Bienvenido, <strong>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</strong>
-        </p>
-
-        <div class="d-grid gap-3 col-md-6 mx-auto">
-            <a href="{% url 'inventario_empleado' %}" class="btn btn-primary btn-lg">
-                 Inventario
-            </a>
-
-            <a href="{% url 'ventas_empleado' %}" class="btn btn-success btn-lg">
-                 Ventas Presenciales
-            </a>
-
-            <a href="{% url 'pedidos_personalizados' %}" class="btn btn-warning btn-lg">
-                 Pedidos de Personalización
-            </a>
-
-            <a href="{% url 'login' %}" class="btn btn-danger btn-lg">
-                    Cerrar Sesión
-            </a>
+<body class="admin-jsf admin-dashboard-body">
+    <!-- Sidebar -->
+    <nav class="admin-sidebar">
+        <div class="px-3 mb-4">
+            <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" class="sidebar-logo" width="120" height="60" onerror="this.style.display='none'">
         </div>
-    </div>
-</div>
+        <ul class="nav flex-column admin-sidebar-nav">
+            <li><a class="nav-link" href="{% url 'inventario_empleado' %}">📦 Inventario</a></li>
+            <li><a class="nav-link" href="{% url 'ventas_empleado' %}">🛒 Ventas</a></li>
+            <li><a class="nav-link" href="{% url 'pedidos_personalizados' %}">🎨 Personalización</a></li>
+        </ul>
+        <div class="sidebar-footer mt-auto p-3">
+            <a href="{% url 'logout' %}" class="btn-logout w-100 text-decoration-none d-block text-center">Cerrar Sesión</a>
+        </div>
+    </nav>
 
+    <!-- Main Content -->
+    <div class="admin-main-wrap">
+        <header class="admin-top-header">
+            <div class="logo-header">
+                <img src="{% static 'img/logo.jpeg' %}" alt="Logo" width="50" height="50" style="border-radius:10px;" onerror="this.style.display='none'">
+                <h2>Cueromania - Empleado</h2>
+            </div>
+            <div class="user-info">
+                <span>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</span>
+                <img src="https://img.icons8.com/ios-glyphs/30/user--v1.png" alt="" width="30" height="30">
+            </div>
+        </header>
+
+        <div class="admin-dashboard-content content-area container-fluid">
+            <h1 class="panel-title-main">Panel del Empleado</h1>
+            <div class="row justify-content-center g-4">
+                <div class="col-sm-5 col-md-5 col-lg-3">
+                    <a href="{% url 'inventario_empleado' %}" class="card card-option text-decoration-none">
+                        <div class="card-body">
+                            <img src="https://img.icons8.com/ios-filled/50/package.png" alt="">
+                            <span>Inventario</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-5 col-md-5 col-lg-3">
+                    <a href="{% url 'ventas_empleado' %}" class="card card-option text-decoration-none">
+                        <div class="card-body">
+                            <img src="https://img.icons8.com/ios-filled/50/shopping-cart.png" alt="">
+                            <span>Ventas Presenciales</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-5 col-md-5 col-lg-3">
+                    <a href="{% url 'pedidos_personalizados' %}" class="card card-option text-decoration-none">
+                        <div class="card-body">
+                            <img src="https://img.icons8.com/ios-filled/50/paint-palette.png" alt="">
+                            <span>Personalización</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="admin-footer">
+            <p>Cueromania S.A.S. | Tel: +57 312 456 7890 | servicio@cueromania.com</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

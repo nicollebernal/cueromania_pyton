@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura PDF #{{ venta.id_ventas }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .titulo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .factura-num {
+            font-size: 16px;
+            color: #666;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .info-col {
+            width: 48%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .total-section {
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #000;
+        }
+        .total-label {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .total-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="titulo">FACTURA DE VENTA</div>
+        <div>Cueromania - Tienda de Cueros</div>
+        <div class="factura-num">Factura #{{ venta.id_ventas }}</div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-col">
+            <strong>Información de la Venta</strong>
+            <p>Fecha: {{ venta.fecha_ventas|date:"d/m/Y H:i" }}</p>
+            <p>Estado: {{ venta.estado_venta }}</p>
+        </div>
+        <div class="info-col">
+            <strong>Cliente</strong>
+            <p>{{ venta.id_usuario.primer_nombre }} {{ venta.id_usuario.primer_apellido }}</p>
+            <p>Email: {{ venta.id_usuario.gmail }}</p>
+            <p>Teléfono: {{ venta.id_usuario.contacto }}</p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>{{ detalle.id_producto.nombre }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>${{ detalle.precio_unitario|floatformat:2 }}</td>
+                <td>${{ detalle.cantidad_pagada|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <div class="total-label">Total a Pagar:</div>
+        <div class="total-amount">${{ venta.total|floatformat:2 }}</div>
+    </div>
+
+    <div class="footer">
+        <p>Gracias por su compra. Cueromania te invita a volver.</p>
+        <p style="margin-top: 20px;">Documento generado: {{ "now"|date:"d/m/Y H:i:s" }}</p>
+    </div>
+</div>
+
+</body>
+</html>

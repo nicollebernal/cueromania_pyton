@@ -16,10 +16,17 @@
             </p>
         </div>
 
-        <a href="{% url 'empleado' %}" class="btn btn-secondary">
-            ⬅ Regresar al Panel Principal
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{% url 'carrito_ventas' %}" class="btn btn-info">
+                🛒 Ver Carrito
+            </a>
+            <a href="{% url 'empleado' %}" class="btn btn-secondary">
+                ⬅ Regresar al Panel Principal
+            </a>
+        </div>
     </div>
+
+    <div id="messageContainer"></div>
 
     <div class="card shadow p-4">
         <h4 class="mb-3">Productos disponibles para vender</h4>
@@ -31,33 +38,104 @@
                         <th>Nombre</th>
                         <th>Precio</th>
                         <th>Stock</th>
-                        <th>Acción</th>
+                        <th>Descripción</th>
+                        <th>Agregar al Carrito</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for producto in productos %}
                     <tr>
-                        <td>{{ producto.nombre }}</td>
-                        <td>${{ producto.precio }}</td>
-                        <td>{{ producto.stock_producto }}</td>
                         <td>
-                            <button class="btn btn-success btn-sm">Vender</button>
+                            <strong>{{ producto.nombre }}</strong>
+                            <br>
+                            <small class="text-muted">ID: {{ producto.id_producto }}</small>
+                        </td>
+                        <td>${{ producto.precio }}</td>
+                        <td>
+                            {% if producto.stock_producto <= 0 %}
+                                <span class="badge bg-danger">Agotado</span>
+                            {% elif producto.stock_producto <= 5 %}
+                                <span class="badge bg-warning">{{ producto.stock_producto }} unidades</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ producto.stock_producto }} unidades</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ producto.descripcion|truncatewords:10 }}</td>
+                        <td>
+                            {% if producto.stock_producto > 0 %}
+                            <form class="agregar-carrito-form" data-producto-id="{{ producto.id_producto }}" style="display:inline;">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="number" name="cantidad" class="form-control" min="1" max="{{ producto.stock_producto }}" value="1" required>
+                                    <button class="btn btn-success" type="submit">Agregar</button>
+                                </div>
+                            </form>
+                            {% else %}
+                                <span class="badge bg-danger">Sin stock</span>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center">No hay productos disponibles.</td>
+                        <td colspan="5" class="text-center">No hay productos disponibles.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-
-        <div class="alert alert-info mt-3">
-            Aquí luego conectamos el registro real de la venta (cliente, cantidad, total, descuento, método de pago).
-        </div>
     </div>
 </div>
+
+<script>
+document.querySelectorAll('.agregar-carrito-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const productoId = this.dataset.productoId;
+        const cantidad = this.querySelector('input[name="cantidad"]').value;
+        const csrfToken = this.querySelector('[name="csrfmiddlewaretoken"]').value;
+        
+        const formData = new FormData();
+        formData.append('cantidad', cantidad);
+        formData.append('csrfmiddlewaretoken', csrfToken);
+        
+        fetch(`/empleado/agregar-al-carrito/${productoId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messageDiv = document.getElementById('messageContainer');
+            if (data.success) {
+                messageDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ✓ ${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+                // Limpiar el input
+                form.querySelector('input[name="cantidad"]').value = '1';
+                // Scroll al mensaje
+                messageDiv.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                messageDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ✗ ${data.error}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+                messageDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('messageContainer').innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Error: ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+        });
+    });
+});
+</script>
 
 </body>
 </html>
