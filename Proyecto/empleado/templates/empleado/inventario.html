@@ -1,30 +1,53 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Inventario Empleado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Empleado — Cueromania</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'panel_admin/panel.css' %}">
 </head>
-<body class="bg-light">
+<body class="admin-jsf admin-interior-body">
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h2 class="mb-1">Inventario</h2>
-            <p class="mb-0">
-                Empleado: <strong>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</strong>
-            </p>
-        </div>
-
-        <div class="d-flex gap-2">
-            <a href="{% url 'crear_producto' %}" class="btn btn-success">
-                ➕ Agregar Producto
-            </a>
-            <a href="{% url 'empleado' %}" class="btn btn-secondary">
-                ⬅ Volver al Panel
-            </a>
-        </div>
+<nav class="admin-sidebar" aria-label="Menú principal">
+    <div class="px-3 mb-4">
+        <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" class="sidebar-logo" width="120" height="60" onerror="this.style.display='none'">
     </div>
+    <ul class="nav flex-column admin-sidebar-nav">
+        <li><a class="nav-link" href="{% url 'inventario_empleado' %}">📦 Inventario</a></li>
+        <li><a class="nav-link" href="{% url 'ventas_empleado' %}">🛒 Ventas</a></li>
+        <li><a class="nav-link" href="{% url 'pedidos_personalizados' %}">🎨 Personalización</a></li>
+    </ul>
+    <div class="sidebar-footer mt-auto p-3">
+        <a href="{% url 'logout' %}" class="btn-logout w-100 text-decoration-none d-block text-center">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="admin-main-wrap">
+    <header class="admin-top-header">
+        <div class="logo-header">
+            <img src="{% static 'img/logo.jpeg' %}" alt="Logo" width="50" height="50" style="border-radius:10px;" onerror="this.style.display='none'">
+            <h2>Inventario</h2>
+        </div>
+        <div class="user-info">
+            <span>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</span>
+            <img src="https://img.icons8.com/ios-glyphs/30/user--v1.png" alt="" width="30" height="30">
+        </div>
+    </header>
+
+    <div class="admin-dashboard-content content-area container-fluid" style="background-color: #f4f6f9; color: #333;">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h1 class="interior-title mb-0" style="color: #8d1b2e;">Gestión de Inventario</h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'crear_producto' %}" class="btn-nuevo-green">
+                    ➕ Agregar Producto
+                </a>
+                <a href="{% url 'empleado' %}" class="btn-volver">
+                    ⬅ Volver al Panel
+                </a>
+            </div>
+        </div>
 
     <!-- Mensajes -->
     {% if messages %}
@@ -48,8 +71,7 @@
 
     <!-- Tabla -->
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle bg-white">
-            <thead class="table-dark">
+        <table class="table table-admin table-bordered table-hover align-middle bg-white">
                 <tr>
                     <th>ID</th>
                     <th>Imagen</th>
@@ -75,44 +97,45 @@
                         {% endif %}
                     </td>
                     <td>{{ producto.nombre }}</td>
-                    <td>${{ producto.precio }}</td>
+                    <td><span class="precio-destacado">${{ producto.precio }}</span></td>
                     <td>{{ producto.talla }}</td>
                     <td>{{ producto.estado }}</td>
                     <td>
                         {% if producto.stock_producto <= 5 %}
-                            <span class="badge bg-danger">{{ producto.stock_producto }}</span>
+                            <span class="stock-bajo">{{ producto.stock_producto }}</span>
                         {% else %}
-                            <span class="badge bg-success">{{ producto.stock_producto }}</span>
+                            <span class="stock-ok">{{ producto.stock_producto }}</span>
                         {% endif %}
                     </td>
                     <td>{{ producto.id_marca.nombre_marca }}</td>
                     <td>{{ producto.id_categoria.nombre_categoria }}</td>
                     <td>
-                        <a href="{% url 'editar_producto_empleado' producto.id_producto %}" class="btn btn-warning btn-sm mb-1">
-                            Editar
-                        </a>
-
-                        <!-- Sumar stock -->
-                        <form method="POST" action="{% url 'sumar_stock' producto.id_producto %}" class="mb-1">
-                            {% csrf_token %}
-                            <div class="input-group input-group-sm">
-                                <input type="number" name="cantidad" class="form-control" min="1" placeholder="+ stock" required>
-                                <button class="btn btn-success">+</button>
-                            </div>
-                        </form>
-
-                        <!-- Restar stock -->
-                        <form method="POST" action="{% url 'restar_stock' producto.id_producto %}" class="mb-1">
-                            {% csrf_token %}
-                            <div class="input-group input-group-sm">
-                                <input type="number" name="cantidad" class="form-control" min="1" placeholder="- stock" required>
-                                <button class="btn btn-danger">-</button>
-                            </div>
-                        </form>
-
-                        <a href="{% url 'eliminar_producto_empleado' producto.id_producto %}" class="btn btn-outline-danger btn-sm">
-                            Eliminar
-                        </a>
+                        <div class="acciones-btns">
+                            <a href="{% url 'editar_producto_empleado' producto.id_producto %}" class="btn-accion btn-editar">
+                                Editar
+                            </a>
+                            <a href="{% url 'eliminar_producto_empleado' producto.id_producto %}" class="btn-accion btn-eliminar">
+                                Eliminar
+                            </a>
+                        </div>
+                        <div class="mt-2">
+                            <!-- Sumar stock -->
+                            <form method="POST" action="{% url 'sumar_stock' producto.id_producto %}" class="mb-1 d-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm" style="width: auto;">
+                                    <input type="number" name="cantidad" class="form-control" min="1" placeholder="+" style="width: 50px;" required>
+                                    <button class="btn btn-success btn-sm">+</button>
+                                </div>
+                            </form>
+                            <!-- Restar stock -->
+                            <form method="POST" action="{% url 'restar_stock' producto.id_producto %}" class="mb-1 d-inline ms-1">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm" style="width: auto;">
+                                    <input type="number" name="cantidad" class="form-control" min="1" placeholder="-" style="width: 50px;" required>
+                                    <button class="btn btn-danger btn-sm">-</button>
+                                </div>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
@@ -123,7 +146,13 @@
             </tbody>
         </table>
     </div>
+
+    <footer class="admin-footer">
+        <p>Cueromania S.A.S. | Tel: +57 312 456 7890 | servicio@cueromania.com</p>
+    </footer>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script></div>
 
 </body>
 </html>

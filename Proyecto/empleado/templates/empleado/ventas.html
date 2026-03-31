@@ -1,39 +1,61 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Ventas Presenciales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas Presenciales — Cueromania</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'panel_admin/panel.css' %}">
 </head>
-<body class="bg-light">
+<body class="admin-jsf admin-interior-body">
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2>Ventas Presenciales</h2>
-            <p class="mb-0">
-                Empleado: <strong>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</strong>
-            </p>
-        </div>
-
-        <div class="d-flex gap-2">
-            <a href="{% url 'carrito_ventas' %}" class="btn btn-info">
-                🛒 Ver Carrito
-            </a>
-            <a href="{% url 'empleado' %}" class="btn btn-secondary">
-                ⬅ Regresar al Panel Principal
-            </a>
-        </div>
+<nav class="admin-sidebar" aria-label="Menú principal">
+    <div class="px-3 mb-4">
+        <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" class="sidebar-logo" width="120" height="60" onerror="this.style.display='none'">
     </div>
+    <ul class="nav flex-column admin-sidebar-nav">
+        <li><a class="nav-link" href="{% url 'inventario_empleado' %}">📦 Inventario</a></li>
+        <li><a class="nav-link" href="{% url 'ventas_empleado' %}">🛒 Ventas</a></li>
+        <li><a class="nav-link" href="{% url 'pedidos_personalizados' %}">🎨 Personalización</a></li>
+    </ul>
+    <div class="sidebar-footer mt-auto p-3">
+        <a href="{% url 'logout' %}" class="btn-logout w-100 text-decoration-none d-block text-center">Cerrar Sesión</a>
+    </div>
+</nav>
 
-    <div id="messageContainer"></div>
+<div class="admin-main-wrap">
+    <header class="admin-top-header">
+        <div class="logo-header">
+            <img src="{% static 'img/logo.jpeg' %}" alt="Logo" width="50" height="50" style="border-radius:10px;" onerror="this.style.display='none'">
+            <h2>Ventas Presenciales</h2>
+        </div>
+        <div class="user-info">
+            <span>{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</span>
+            <img src="https://img.icons8.com/ios-glyphs/30/user--v1.png" alt="" width="30" height="30">
+        </div>
+    </header>
 
-    <div class="card shadow p-4">
-        <h4 class="mb-3">Productos disponibles para vender</h4>
+    <div class="admin-dashboard-content content-area container-fluid" style="background-color: #f4f6f9; color: #333;">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h1 class="interior-title mb-0" style="color: #8d1b2e;">Registro de Ventas Presenciales</h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'carrito_ventas' %}" class="btn-refrescar">
+                    🛒 Ver Carrito
+                </a>
+                <a href="{% url 'empleado' %}" class="btn-volver">
+                    ⬅ Panel Principal
+                </a>
+            </div>
+        </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover bg-white">
-                <thead class="table-dark">
+        <div id="messageContainer"></div>
+
+        <div class="interior-white-panel">
+            <h4 class="interior-title mb-3" style="color: #333; font-size: 1.1rem;">Productos disponibles para vender</h4>
+
+            <div class="table-responsive">
+                <table class="table table-admin table-bordered table-hover bg-white">
                     <tr>
                         <th>Nombre</th>
                         <th>Precio</th>
@@ -50,14 +72,14 @@
                             <br>
                             <small class="text-muted">ID: {{ producto.id_producto }}</small>
                         </td>
-                        <td>${{ producto.precio }}</td>
+                        <td><span class="precio-destacado">${{ producto.precio }}</span></td>
                         <td>
                             {% if producto.stock_producto <= 0 %}
-                                <span class="badge bg-danger">Agotado</span>
+                                <span class="badge-cancelado">Agotado</span>
                             {% elif producto.stock_producto <= 5 %}
-                                <span class="badge bg-warning">{{ producto.stock_producto }} unidades</span>
+                                <span class="badge-pendiente">{{ producto.stock_producto }} unidades</span>
                             {% else %}
-                                <span class="badge bg-success">{{ producto.stock_producto }} unidades</span>
+                                <span class="badge-entregado">{{ producto.stock_producto }} unidades</span>
                             {% endif %}
                         </td>
                         <td>{{ producto.descripcion|truncatewords:10 }}</td>
@@ -81,11 +103,17 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+                </table>
+            </div>
         </div>
     </div>
+
+    <footer class="admin-footer">
+        <p>Cueromania S.A.S. | Tel: +57 312 456 7890 | servicio@cueromania.com</p>
+    </footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.querySelectorAll('.agregar-carrito-form').forEach(form => {
     form.addEventListener('submit', function(e) {
