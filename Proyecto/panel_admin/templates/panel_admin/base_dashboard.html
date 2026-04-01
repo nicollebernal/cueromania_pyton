@@ -22,7 +22,7 @@
             <li><a class="nav-link" href="{% url 'panel_pagos' %}">Pagos</a></li>
         </ul>
         <div class="sidebar-footer mt-auto p-3">
-            <form action="{% url 'panel_salir' %}" method="post">
+            <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn-logout w-100">Cerrar Sesión</button>
             </form>

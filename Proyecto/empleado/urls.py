@@ -4,12 +4,11 @@ from . import views
 urlpatterns = [
     
     path('', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.empleado_dashboard, name='empleado'),
     path('inventario/', views.inventario_empleado, name='inventario_empleado'),
     path('ventas/', views.ventas_empleado, name='ventas_empleado'),
     path('pedidos-personalizados/', views.pedidos_personalizados, name='pedidos_personalizados'),
-    path('cliente/', views.cliente_dashboard, name='cliente'),
+    path('cliente/', views.cliente_dashboard, name='empleado_cliente'),
 
    
     path('productos/', views.lista_productos, name='lista_productos'),
