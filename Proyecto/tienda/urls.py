@@ -14,6 +14,8 @@ urlpatterns = [
    path ('registrar_usuario/', views.registrar_usuario, name ='registrar_usuario'),
    path ('perfil/', views.cliente_perfil, name='perfil'),
    path  ('cliente/', views.cliente_dashboard, name='cliente'),
+   path('valoraciones/', views.valoraciones, name='valoraciones'),
+   path('valoraciones/crear/<int:producto_id>/', views.crear_valoracion, name='crear_valoracion'),
    path('<int:producto_id>/', views.agregar, name='agregar'),
    path('filtrar/', views.filtrar_producto, name='filtrar_producto'),
 ]

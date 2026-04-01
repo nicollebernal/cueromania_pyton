@@ -2,8 +2,21 @@ from datetime import date
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .models import Usuario, Producto, Rol, Personalizacion, categoria, colores, marcas, genero
+from .models import (
+    Usuario,
+    Producto,
+    Rol,
+    Personalizacion,
+    Valoracion,
+    Venta,
+    DetalleVenta,
+    categoria,
+    colores,
+    marcas,
+    genero,
+)
 from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
 from Carrito.carro import Carro
 
 
@@ -226,3 +239,76 @@ def crear_personalizacion(request):
         )
 
     return redirect('personalizacion')
+
+
+def valoraciones(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+
+    reviews = Valoracion.objects.filter(id_usuario=usuario).select_related('id_producto')
+    reviewed_product_ids = set(reviews.values_list('id_producto_id', flat=True))
+
+    compras = DetalleVenta.objects.filter(id_venta__id_usuario=usuario).select_related('id_producto')
+    productos_comprados = {}
+    for detalle in compras:
+        producto = detalle.id_producto
+        productos_comprados[producto.id_producto] = producto
+
+    productos_pendientes = [producto for pid, producto in productos_comprados.items() if pid not in reviewed_product_ids]
+
+    return render(request, 'cliente/valoraciones.html', {
+        'usuario': usuario,
+        'reviews': reviews,
+        'productos_pendientes': productos_pendientes,
+    })
+
+
+def crear_valoracion(request, producto_id):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+    producto = get_object_or_404(Producto, id_producto=producto_id)
+
+    if not DetalleVenta.objects.filter(id_venta__id_usuario=usuario, id_producto=producto).exists():
+        messages.error(request, 'Solo puedes valorar productos que hayas comprado.')
+        return redirect('valoraciones')
+
+    if Valoracion.objects.filter(id_usuario=usuario, id_producto=producto).exists():
+        messages.info(request, 'Ya dejaste una valoración para este producto.')
+        return redirect('valoraciones')
+
+    if request.method == 'POST':
+        valor = request.POST.get('valor_puntuacion', '').strip()
+        comentario = request.POST.get('comentario', '').strip()
+
+        try:
+            valor = int(valor)
+        except (ValueError, TypeError):
+            valor = 0
+
+        if valor < 1 or valor > 5:
+            messages.error(request, 'La calificación debe ser un número entre 1 y 5.')
+            return render(request, 'cliente/crear_valoracion.html', {
+                'producto': producto,
+                'valor_puntuacion': valor,
+                'comentario': comentario,
+            })
+
+        Valoracion.objects.create(
+            valor_puntuacion=valor,
+            comentario=comentario,
+            id_usuario=usuario,
+            id_producto=producto,
+        )
+
+        messages.success(request, 'Gracias por tu valoración.')
+        return redirect('valoraciones')
+
+    return render(request, 'cliente/crear_valoracion.html', {
+        'producto': producto,
+    })

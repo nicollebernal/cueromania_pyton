@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valoraciones - Cueromania</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cliente.css' %}">
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Valoraciones</h1>
+
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="mb-5">
+            <h3>Productos comprados pendientes de valoración</h3>
+            {% if productos_pendientes %}
+                <div class="row">
+                    {% for producto in productos_pendientes %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                                    <p class="card-text">Talla: {{ producto.talla }}</p>
+                                    <a href="{% url 'crear_valoracion' producto.id_producto %}" class="btn btn-primary">Valorar</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No tienes productos por valorar en este momento.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h3>Valoraciones realizadas</h3>
+            {% if reviews %}
+                <div class="list-group">
+                    {% for review in reviews %}
+                        <div class="list-group-item">
+                            <h5>{{ review.id_producto.nombre }} <small class="text-muted">{{ review.valor_puntuacion }}/5</small></h5>
+                            {% if review.comentario %}
+                                <p>{{ review.comentario }}</p>
+                            {% endif %}
+                            <small class="text-muted">{{ review.fecha_puntuacion }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aún no has dejado ninguna valoración.</p>
+            {% endif %}
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'cliente' %}" class="btn btn-secondary">Volver a la tienda</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,7 +1,12 @@
+from datetime import date
+from decimal import Decimal
+
+from django.contrib import messages
 from django.shortcuts import redirect, render
-from Carrito.carro import Carro
-from tienda.models import Producto
 from django.http import JsonResponse
+
+from Carrito.carro import Carro
+from tienda.models import Producto, Usuario, Venta, DetalleVenta, Pago
 def carro(request):
     carro = Carro(request)
     productos = Producto.objects.filter(id_producto__in=carro.carro.keys())
@@ -15,6 +20,99 @@ def carro(request):
         producto.total_carrito = producto.precio * producto.cantidad
     total = sum(producto.total_carrito for producto in productos)
     return render(request, 'carrito.html', {'carro': carro, 'productos': productos, 'total': total})
+
+
+def checkout(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        messages.error(request, 'Debes iniciar sesión para completar la compra.')
+        return redirect('login')
+
+    usuario = Usuario.objects.get(id_usuario=usuario_id)
+    carro = Carro(request)
+    if not carro.carro:
+        messages.error(request, 'El carrito está vacío. Agrega al menos una chaqueta antes de pagar.')
+        return redirect('carro')
+
+    productos = Producto.objects.filter(id_producto__in=carro.carro.keys())
+    items = []
+    total = Decimal('0.00')
+
+    for producto in productos:
+        entry = carro.carro[str(producto.id_producto)]
+        cantidad = int(entry.get('cantidad', 1))
+        subtotal = producto.precio * cantidad
+        total += subtotal
+        items.append({
+            'producto': producto,
+            'cantidad': cantidad,
+            'subtotal': subtotal,
+        })
+
+    if request.method == 'POST':
+        metodo_pago = request.POST.get('metodo_pago', '').strip()
+        opcion_pago = request.POST.get('opcion_pago', '').strip()
+        personalizacion = request.POST.get('personalizacion', '').strip()
+
+        if metodo_pago not in ['Nequi', 'Bancolombia', 'Daviplata']:
+            messages.error(request, 'Selecciona un método de pago válido.')
+            return render(request, 'checkout.html', {
+                'usuario': usuario,
+                'items': items,
+                'total': total,
+                'metodo_pago': metodo_pago,
+                'opcion_pago': opcion_pago,
+                'personalizacion': personalizacion,
+            })
+
+        venta = Venta.objects.create(
+            fecha_ventas=date.today(),
+            estado_venta='Pendiente',
+            total=total,
+            id_usuario=usuario,
+        )
+
+        for item in items:
+            producto = item['producto']
+            cantidad = item['cantidad']
+            subtotal = item['subtotal']
+
+            DetalleVenta.objects.create(
+                cantidad=cantidad,
+                cantidad_pagada=subtotal,
+                precio_unitario=producto.precio,
+                id_venta=venta,
+                id_producto=producto,
+            )
+
+            producto.stock_producto = max(producto.stock_producto - cantidad, 0)
+            producto.save(update_fields=['stock_producto'])
+
+        Pago.objects.create(
+            precio=total,
+            estado_pago='Por validar',
+            metodo_pagos=metodo_pago,
+            opcion_pagos=opcion_pago,
+            id_venta=venta,
+        )
+
+        carro.limpiar()
+
+        return render(request, 'confirmacion_compra.html', {
+            'venta': venta,
+            'items': items,
+            'total': total,
+            'metodo_pago': metodo_pago,
+            'opcion_pago': opcion_pago,
+            'personalizacion': personalizacion,
+        })
+
+    return render(request, 'checkout.html', {
+        'usuario': usuario,
+        'items': items,
+        'total': total,
+    })
+
 
 def agregar(request, producto_id):
     carro = Carro(request)

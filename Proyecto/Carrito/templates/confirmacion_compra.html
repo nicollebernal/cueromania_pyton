@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de compra - Cueromania</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title">Compra registrada</h1>
+                <p class="card-text">Tu pedido se ha registrado correctamente con el número <strong>#{{ venta.id_ventas }}</strong>.</p>
+                <p>Estado de la venta: <strong>{{ venta.estado_venta }}</strong></p>
+                <p>Método de pago: <strong>{{ metodo_pago }}</strong></p>
+                <p>Referencia: <strong>{{ opcion_pago }}</strong></p>
+                {% if personalizacion %}
+                <p>Personalización: <strong>{{ personalizacion }}</strong></p>
+                {% endif %}
+                <h4 class="mt-4">Resumen</h4>
+                <ul>
+                    {% for item in items %}
+                    <li>{{ item.producto.nombre }} x{{ item.cantidad }} — ${{ item.subtotal }}</li>
+                    {% endfor %}
+                </ul>
+                <h5>Total: ${{ total }}</h5>
+                <p class="text-muted mt-3">Envía el comprobante de pago por WhatsApp para que podamos validar tu pago y procesar el pedido.</p>
+                <a href="{% url 'cliente' %}" class="btn btn-primary">Volver a la tienda</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
