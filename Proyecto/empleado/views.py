@@ -738,16 +738,3 @@ def eliminar_personalizacion(request, personalizacion_id):
     personalizacion.delete()
     messages.success(request, 'Personalización eliminada correctamente.')
     return redirect('pedidos_personalizados')
-
-
-def logout_view(request):
-    """
-    Cerrar sesión del usuario.
-    """
-    if 'usuario_id' in request.session:
-        del request.session['usuario_id']
-    if 'carrito_ventas' in request.session:
-        del request.session['carrito_ventas']
-    request.session.modified = True
-    messages.success(request, 'Sesión cerrada correctamente.')
-    return redirect('login')

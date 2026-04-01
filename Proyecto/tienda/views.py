@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import Usuario, Producto, Rol, Personalizacion, categoria, colores, marcas, genero
 from django.contrib.auth.hashers import make_password
@@ -86,6 +87,11 @@ def cliente_perfil(request):
     })
 
 
+def logout_view(request):
+    request.session.flush()
+    return redirect('/')
+
+
 def lista_productos(request):
     productos = Producto.objects.all()
     return render(request, 'cliente/cliente.html', {
@@ -131,7 +137,7 @@ def registrar_usuario(request):
         direccion = request.POST['direccion']
         contacto = request.POST['contacto']
         gmail = request.POST['gmail']
-        clave = make_password(request.POST['clave'])  # 🔑 aquí se cifra la clave
+        clave = make_password(request.POST['clave'])
         rol_cliente = Rol.objects.get(nombre_rol='cliente')
 
         usuario = Usuario.objects.create(

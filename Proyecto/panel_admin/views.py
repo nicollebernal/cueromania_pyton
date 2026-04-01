@@ -54,12 +54,6 @@ def dashboard(request):
     )
 
 
-@solo_administrador
-def cerrar_sesion(request):
-    request.session.flush()
-    return redirect('login')
-
-
 
 
 
