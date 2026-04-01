@@ -67,10 +67,6 @@ def login_view(request):
     return render(request, 'login/login.html')
 
 
-def admin_dashboard(request):
-    return render(request, 'administrador/administrador.html')
-
-
 def empleado_dashboard(request):
     """
     Dashboard del empleado con lista de productos e inventario.
