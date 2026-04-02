@@ -2,6 +2,7 @@ from datetime import date
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.hashers import make_password
+from django.db.models import Avg
 from .models import (
     Usuario, Producto, Rol, Personalizacion, 
     Valoracion, Venta, DetalleVenta, 
@@ -86,11 +87,13 @@ def cliente_perfil(request):
 def empleado_dashboard(request):
     return render(request, 'Empleado/empleado.html')
 
+from django.db.models import Avg
+
 def cliente_dashboard(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id: return redirect('login')
     usuario = Usuario.objects.get(id_usuario=usuario_id)
-    productos = Producto.objects.all()
+    productos = Producto.objects.annotate(avg_rating=Avg('valoraciones__valor_puntuacion')).all()
     carro = Carro(request)
     for producto in productos:
         producto.cantidad_en_carro = carro.carro.get(str(producto.id_producto), {}).get('cantidad', 0)
@@ -111,7 +114,7 @@ def filtrar_producto(request):
     if not usuario_id: return redirect('login')
     usuario = Usuario.objects.get(id_usuario=usuario_id)
     query = request.GET.get('q', '').strip()
-    productos = Producto.objects.filter(nombre__icontains=query) if query else Producto.objects.all()
+    productos = Producto.objects.filter(nombre__icontains=query).annotate(avg_rating=Avg('valoraciones__valor_puntuacion')) if query else Producto.objects.annotate(avg_rating=Avg('valoraciones__valor_puntuacion')).all()
     carro = Carro(request)
     for producto in productos:
         producto.cantidad_en_carro = carro.carro.get(str(producto.id_producto), {}).get('cantidad', 0)
@@ -153,8 +156,8 @@ def valoraciones(request):
     usuario = Usuario.objects.get(id_usuario=usuario_id)
     reviews = Valoracion.objects.filter(id_usuario=usuario).select_related('id_producto')
     reviewed_ids = set(reviews.values_list('id_producto_id', flat=True))
-    compras = DetalleVenta.objects.filter(id_venta__id_usuario=usuario).select_related('id_producto')
-    productos_pendientes = [d.id_producto for d in compras if d.id_producto.id_producto not in reviewed_ids]
+    compras = DetalleVenta.objects.filter(id_venta__id_usuario=usuario).select_related('id_producto', 'id_venta')
+    productos_pendientes = [d for d in compras if d.id_producto.id_producto not in reviewed_ids]
     return render(request, 'cliente/valoraciones.html', {
         'usuario': usuario, 'reviews': reviews, 'productos_pendientes': productos_pendientes
     })
@@ -189,6 +192,7 @@ def crear_valoracion(request, producto_id):
             messages.error(request, 'Debes seleccionar una puntuación.')
 
     return render(request, 'cliente/crear_valoracion.html', {'producto': producto})
+
 def nosotros(request):
     return render(request, 'cliente/nosotros.html')
 def contacto(request):

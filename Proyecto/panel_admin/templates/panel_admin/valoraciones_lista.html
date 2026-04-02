@@ -13,20 +13,28 @@
                         <th>Producto</th>
                         <th>Puntuación</th>
                         <th>Comentario</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    
-                    <tr>
-                        <td>{{ op.id_valoracion }}</td>
-                        <td>{{ op.id_usuario.primer_nombre|default:"N/A" }}</td>
-                        <td>{{ op.id_producto.nombre|default:"N/A" }}</td>
-                        <td>{{ op.valor_puntuacion }} ⭐</td>
-                        <td>{{ op.comentario }}</td>
-                    </tr>
-                    
-                    <tr><td colspan="5" class="text-center">No hay valoraciones registradas.</td></tr>
-                    
+                    {% if opiniones %}
+                        {% for op in opiniones %}
+                        <tr>
+                            <td>{{ op.id_valoracion }}</td>
+                            <td>{{ op.id_usuario.primer_nombre }} {{ op.id_usuario.primer_apellido }}</td>
+                            <td>{{ op.id_producto.nombre }}</td>
+                            <td>{{ op.valor_puntuacion }} ⭐</td>
+                            <td>{{ op.comentario|default:"(sin comentario)" }}</td>
+                            <td>{{ op.fecha_puntuacion }}</td>
+                            <td>
+                                <a href="{% url 'panel_valoracion_eliminar' op.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td colspan="7" class="text-center">No hay valoraciones registradas.</td></tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

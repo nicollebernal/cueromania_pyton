@@ -63,6 +63,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ producto.nombre }}</h5>
                         <p class="card-text text-muted">{{ producto.descripcion }}</p>
+                        
                         <h4 class="precio fw-bold" style="position: relative; top: 10%;">${{ producto.precio }}</h4>
                         <div class="d-flex align-items-center gap-2" style="position: relative; left: 70%; top: -20%;">
                             <button class="btn btn-sm" onclick="restar({{ producto.id_producto }})">-</button>
