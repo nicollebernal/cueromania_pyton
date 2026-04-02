@@ -180,8 +180,7 @@ def crear_valoracion(request, producto_id):
                 comentario=comentario,
                 id_usuario=usuario,
                 id_producto=producto,
-                # Si tu modelo tiene un campo para imagen, descomenta la línea de abajo:
-                # imagen_valoracion=foto, 
+                imagen_valoracion=foto,
                 fecha_puntuacion=date.today()
             )
             messages.success(request, '¡Gracias por tu valoración!')
@@ -192,3 +191,6 @@ def crear_valoracion(request, producto_id):
     return render(request, 'cliente/crear_valoracion.html', {'producto': producto})
 def nosotros(request):
     return render(request, 'cliente/nosotros.html')
+def contacto(request):
+   
+    return render(request, 'tienda/contacto.html')

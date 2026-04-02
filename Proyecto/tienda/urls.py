@@ -19,6 +19,7 @@ urlpatterns = [
    path('<int:producto_id>/', views.agregar, name='agregar'),
    path('filtrar/', views.filtrar_producto, name='filtrar_producto'),
    path('nosotros/', views.nosotros, name='nosotros'),
+   path('contacto/', views.contacto, name='contacto'), 
 ]
 
 if settings.DEBUG:
