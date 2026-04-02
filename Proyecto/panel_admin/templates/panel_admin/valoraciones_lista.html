@@ -1,0 +1,35 @@
+{% extends "panel_admin/base_dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="h3 mb-4 text-gray-800">{{ titulo }}</h1>
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Puntuación</th>
+                        <th>Comentario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>{{ op.id_valoracion }}</td>
+                        <td>{{ op.id_usuario.primer_nombre|default:"N/A" }}</td>
+                        <td>{{ op.id_producto.nombre|default:"N/A" }}</td>
+                        <td>{{ op.valor_puntuacion }} ⭐</td>
+                        <td>{{ op.comentario }}</td>
+                    </tr>
+                    
+                    <tr><td colspan="5" class="text-center">No hay valoraciones registradas.</td></tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -233,27 +233,20 @@ class Valoracion(models.Model):
     valor_puntuacion = models.IntegerField()
     fecha_puntuacion = models.DateField(auto_now_add=True)
     comentario = models.TextField(blank=True)
+   
+    imagen_valoracion = models.ImageField(upload_to='valoraciones/', blank=True, null=True)
+    
     id_usuario = models.ForeignKey(
-        Usuario,
-        on_delete=models.CASCADE,
-        db_column='id_usuario',
-        related_name='valoraciones',
+        Usuario, on_delete=models.CASCADE, db_column='id_usuario', related_name='valoraciones'
     )
     id_producto = models.ForeignKey(
-        Producto,
-        on_delete=models.CASCADE,
-        db_column='id_producto',
-        related_name='valoraciones',
+        Producto, on_delete=models.CASCADE, db_column='id_producto', related_name='valoraciones'
     )
 
     class Meta:
         db_table = 'valoraciones'
         ordering = ['-fecha_puntuacion']
-        managed = False
-
-    def __str__(self):
-        return f'Valoración #{self.id_valoracion} para {self.id_producto.nombre}'
-
+        managed = True  # <--- CAMBIA ESTO A TRUE (O bórralo, por defecto es True)
 
 class Personalizacion(models.Model):
     id_personalizacion = models.AutoField(primary_key=True)

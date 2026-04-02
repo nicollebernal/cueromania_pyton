@@ -47,4 +47,6 @@ urlpatterns = [
     path('personalizacion/editar/<int:pk>/', views.personalizacion_editar, name='panel_personalizacion_editar'),
     path('personalizacion/eliminar/<int:pk>/', views.personalizacion_eliminar, name='panel_personalizacion_eliminar'),
     path('personalizacion/<int:pk>/', views.personalizacion_ver, name='panel_personalizacion_ver'),
+    path('valoraciones/', views.valoraciones_lista, name='panel_valoraciones'),
+    path('valoraciones/eliminar/<int:pk>/', views.valoracion_eliminar, name='panel_valoracion_eliminar'),
 ]

@@ -1,0 +1,93 @@
+{% extends "cliente/cliente.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 animate-fade-in">
+    
+    <div id="carouselNosotros" class="carousel slide shadow-lg mb-5" data-bs-ride="carousel" style="border-radius: 25px; overflow: hidden; background-color: #000;">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselNosotros" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#carouselNosotros" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#carouselNosotros" data-bs-slide-to="2"></button>
+        </div>
+        
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px; background: #000;">
+                    <img src="{% static 'img/local.jpeg' %}" class="d-block" alt="Local 1" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                </div>
+                <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.5); border-radius: 15px; padding: 10px;">
+                    <h5 class="fw-bold text-white">Nuestra Sede Principal</h5>
+                    <p class="text-white-50">Donde la magia del cuero comienza.</p>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px; background: #000;">
+                    <img src="{% static 'img/local2.jpeg' %}" class="d-block" alt="Local 2" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                </div>
+                <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.5); border-radius: 15px; padding: 10px;">
+                    <h5 class="fw-bold text-white">Artesanía Pura</h5>
+                    <p class="text-white-50">Materiales de primera calidad.</p>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="d-flex align-items-center justify-content-center" style="height: 500px; background: #000;">
+                    <img src="{% static 'img/local3.jpeg' %}" class="d-block" alt="Local 3" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                </div>
+                <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.5); border-radius: 15px; padding: 10px;">
+                    <h5 class="fw-bold text-white">Atención Personalizada</h5>
+                    <p class="text-white-50">Te asesoramos en cada detalle.</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNosotros" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselNosotros" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
+    <div class="row align-items-center g-5 py-5">
+        <div class="col-lg-6">
+            <h6 class="text-uppercase fw-bold text-danger mb-2" style="letter-spacing: 3px;">Desde el corazón del taller</h6>
+            <h2 class="display-5 fw-bold text-dark mb-4">Nuestra Historia</h2>
+            <p class="lead text-secondary">Cueromanía nació como un sueño familiar, fundamentado en el respeto por el oficio de la marroquinería artesanal.</p>
+            <p class="text-muted">Creemos en productos que no pasan de moda. Cada pieza lleva consigo el compromiso de durar generaciones, manteniendo la elegancia que solo el cuero legítimo puede ofrecer.</p>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg p-2" style="border-radius: 20px; background: #1a1a1a;">
+                <div class="ratio ratio-16x9 overflow-hidden" style="border-radius: 15px;">
+                    <video controls poster="{% static 'img/local.jpeg' %}">
+                        <source src="{% static 'video/publicidad.mp4' %}" type="video/mp4">
+                        Tu navegador no soporta el video.
+                    </video>
+                </div>
+                <div class="card-body text-center py-3">
+                    <h5 class="text-white fw-bold mb-0">Palabras de nuestro fundador</h5>
+                    <small class="text-white-50">Conoce la pasión detrás de Cueromanía</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .animate-fade-in { animation: fadeIn 1s ease-in-out; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    /* Efecto sutil al pasar el mouse por las fotos */
+    .carousel-item img { 
+        transition: transform 0.5s ease;
+    }
+    .carousel-item:hover img {
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}

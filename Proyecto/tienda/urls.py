@@ -18,6 +18,7 @@ urlpatterns = [
    path('valoraciones/crear/<int:producto_id>/', views.crear_valoracion, name='crear_valoracion'),
    path('<int:producto_id>/', views.agregar, name='agregar'),
    path('filtrar/', views.filtrar_producto, name='filtrar_producto'),
+   path('nosotros/', views.nosotros, name='nosotros'),
 ]
 
 if settings.DEBUG:

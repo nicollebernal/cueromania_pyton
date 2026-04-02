@@ -47,7 +47,7 @@ from .models import Usuario{% load static %}
         </div>
         {% endif %}
 
-        <form method="post">
+       <form method="post" action="{% url 'crear_valoracion' producto.id_producto %}">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="valor_puntuacion" class="form-label">Calificación</label>

@@ -818,3 +818,41 @@ def personalizacion_eliminar(request, pk):
             'usuario': request.admin_usuario,
         },
     )
+ 
+
+@solo_administrador
+def valoraciones_lista(request):
+    from tienda.models import Valoracion
+    
+
+    opiniones = Valoracion.objects.all().order_by('-id_valoracion')
+    
+    return render(
+        request,
+        'panel_admin/valoraciones_lista.html',
+        {
+            'opiniones': opiniones, # Asegúrate que sea plural
+            'usuario': request.admin_usuario,
+            'titulo': 'Opiniones de Clientes'
+        },
+    )
+@solo_administrador
+def valoracion_eliminar(request, pk):
+    from tienda.models import Valoracion
+    opinion = get_object_or_404(Valoracion, pk=pk)
+    
+    if request.method == 'POST':
+        opinion.delete()
+        messages.success(request, 'La opinión ha sido eliminada.')
+        return redirect('panel_valoraciones') 
+        
+    return render(
+        request,
+        'panel_admin/confirmar_eliminar.html',
+        {
+            'titulo': 'Eliminar Valoración',
+            'objeto': f"Opinión de {opinion.id_usuario.primer_nombre} sobre {opinion.id_producto.nombre}",
+            'volver': 'panel_valoraciones',
+            'usuario': request.admin_usuario,
+        },
+    )
