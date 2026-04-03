@@ -3,54 +3,80 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                <div class="card-body p-5">
-                    <h2 class="fw-bold mb-4 text-center">Valorar Producto</h2>
-                    
-                    <div class="text-center mb-4">
-                        {% if producto.imagen %}
-                            <img src="{{ producto.imagen.url }}" width="120" class="rounded shadow-sm mb-2">
+    <h1 class="mb-5">Mis Valoraciones</h1>
+
+    <!-- PRODUCTOS POR VALORAR -->
+    <div class="mb-5">
+        <h3 class="fw-bold mb-3"> Productos que Puedes Valorar</h3>
+        {% if productos_pendientes %}
+            <div class="row">
+                {% for detalle in productos_pendientes %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        {% if detalle.id_producto.imagen %}
+                            <img src="{{ detalle.id_producto.imagen.url }}" alt="{{ detalle.id_producto.nombre }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'img/placeholder.png' %}" alt="{{ detalle.id_producto.nombre }}" class="card-img-top" style="height: 200px; object-fit: cover;">
                         {% endif %}
-                        <h4 class="fw-bold">{{ producto.nombre }}</h4>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ detalle.id_producto.nombre }}</h5>
+                            <p class="text-muted small">Comprado: {{ detalle.id_venta.fecha_ventas }}</p>
+                            <p class="fw-bold text-danger">${{ detalle.precio_unitario }}</p>
+                            <a href="{% url 'crear_valoracion' detalle.id_producto.id_producto %}" class="btn btn-sm btn-warning w-100">
+                                ⭐ Valorar Ahora
+                            </a>
+                        </div>
                     </div>
-
-                    <form method="POST" action="." enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <div class="mb-4 text-center">
-                            <label class="form-label fw-bold d-block">¿Qué puntuación le das?</label>
-                            <select name="valor_puntuacion" class="form-select form-select-lg" required>
-                                <option value="">Selecciona estrellas...</option>
-                                <option value="5">⭐⭐⭐⭐⭐ (Excelente)</option>
-                                <option value="4">⭐⭐⭐⭐ (Muy bueno)</option>
-                                <option value="3">⭐⭐⭐ (Bueno)</option>
-                                <option value="2">⭐⭐ (Regular)</option>
-                                <option value="1">⭐ (Malo)</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="comentario" class="form-label fw-bold">Tu opinión</label>
-                            <textarea class="form-control" name="comentario" rows="3" placeholder="Escribe aquí tu reseña..."></textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Sube una foto de tu producto (Opcional)</label>
-                            <input type="file" name="foto_valoracion" class="form-control" accept="image/*">
-                            <small class="text-muted">Muestra cómo te quedó tu artículo de cuero.</small>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-dark btn-lg">Enviar Valoración</button>
-                            
-                            <a href="{% url 'cliente' %}" class="btn btn-outline-secondary">Volver al Inicio</a>
-                        </div>
-                    </form>
                 </div>
+                {% endfor %}
             </div>
-        </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p>No tienes productos pendientes por valorar.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- VALORACIONES YA HECHAS -->
+    <div class="mt-5 pt-5 border-top">
+        <h3 class="fw-bold mb-3">⭐ Tus Valoraciones</h3>
+        {% if reviews %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Producto</th>
+                            <th>Puntuación</th>
+                            <th>Comentario</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                        <tr>
+                            <td><strong>{{ review.id_producto.nombre }}</strong></td>
+                            <td>
+                                {% for i in "12345" %}
+                                    {% if i|add:"0" <= review.valor_puntuacion %}⭐{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ review.valor_puntuacion }})
+                            </td>
+                            <td>{{ review.comentario|default:"(sin comentario)" }}</td>
+                            <td>{{ review.fecha_puntuacion }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-secondary">
+                <p>Aún no has valorado ningún producto.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'cliente' %}" class="btn btn-outline-secondary">← Volver al Catálogo</a>
     </div>
 </div>
 {% endblock %}

@@ -48,6 +48,7 @@
                         <th>Talla</th>
                         <th>Stock</th>
                         <th>Precio</th>
+                        <th>Valoración</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -65,6 +66,7 @@
                             <span class="{% if p.stock_producto < 5 %}stock-bajo{% else %}stock-ok{% endif %}">{{ p.stock_producto }}</span>
                         </td>
                         <td><span class="precio-destacado">${{ p.precio }}</span></td>
+                        <td>{% if p.avg_rating %}{{ p.avg_rating|floatformat:1 }} ⭐{% else %}Sin valoraciones{% endif %}</td>
                         <td>
                             {% if p.estado|lower == 'activo' %}
                             <span class="badge-activo">{{ p.estado }}</span>

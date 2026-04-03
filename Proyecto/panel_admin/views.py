@@ -3,7 +3,7 @@ from decimal import Decimal
 from io import BytesIO
 
 from django.contrib import messages
-from django.db.models import Prefetch
+from django.db.models import Avg, Prefetch
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from tienda.models import (
@@ -61,7 +61,7 @@ def dashboard(request):
 def productos_lista(request):
     productos = Producto.objects.select_related(
         'id_marca', 'id_categoria', 'id_color', 'id_genero', 'id_tipo_cierre'
-    ).order_by('-id_producto')
+    ).annotate(avg_rating=Avg('valoraciones__valor_puntuacion')).order_by('-id_producto')
     lista_colores = colores.objects.all().order_by('nombre_color')
     return render(
         request,
