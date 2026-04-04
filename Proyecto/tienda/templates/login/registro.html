@@ -2,112 +2,241 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro</title>
+    <title>Registro de Usuario | Cueromanía</title>
+
     {% load static %}
+
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --color-fondo-oscuro: #0f1113;
-            --color-fondo-claro: #1f2428;
-            --color-vino: #7a0c14;
-            --color-rojo: #b71c1c;
-            --color-rojo-intenso: #c62828;
-            --color-texto-claro: #ddd;
-            --color-error: #e57373;
+            --rojo-primario: #5a0f14;
+            --rojo-vibrante: #8b1c24;
+            --blanco-puro: #ffffff;
+            --gris-suave: #f8fafc;
+            --texto-deep: #0f172a;
         }
 
         body {
-            background: radial-gradient(circle at top, var(--color-fondo-claro), var(--color-fondo-oscuro));
-            color: var(--color-texto-claro);
-            font-family: 'Montserrat', sans-serif;
+            background-color: var(--gris-suave);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 28, 36, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(90, 15, 20, 0.05) 0px, transparent 50%);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
         }
 
-        .registro-box {
+        .registro-card {
+            background: var(--blanco-puro);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(90, 15, 20, 0.15);
             width: 100%;
-            max-width: 500px;
-            border-radius: 20px;
-            background: rgba(18, 20, 23, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--color-vino);
-            box-shadow: 0 0 20px rgba(122, 12, 20, 0.9), 0 0 40px rgba(122, 12, 20, 0.6), 0 0 80px rgba(122, 12, 20, 0.4);
-            padding: 2rem;
+            max-width: 650px; /* Un poco más ancho para las columnas */
+            padding: 3rem;
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
         h3 {
-            color: var(--color-rojo-intenso);
-            font-weight: bold;
+            font-weight: 800;
+            color: var(--rojo-primario);
+            letter-spacing: -1.5px;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
         }
 
-        .form-control {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            color: var(--color-texto-claro);
-            transition: 0.3s ease;
+        p.welcome-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
         }
 
-        .form-control:focus {
-            border: 1px solid var(--color-rojo);
-            box-shadow: 0 0 6px var(--color-rojo);
+        /* Estilo de Inputs */
+        .input-group-modern {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group-modern label {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            display: block;
+            padding-left: 5px;
+        }
+
+        .input-group-modern input {
+            width: 100%;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--texto-deep);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-group-modern input:focus {
+            background: var(--blanco-puro);
+            border-color: var(--rojo-vibrante);
+            box-shadow: 0 8px 15px -8px rgba(139, 28, 36, 0.2);
             outline: none;
         }
 
-        .btn-registro {
-            background: linear-gradient(135deg, var(--color-vino), var(--color-rojo-intenso));
-            border-radius: 12px;
+        
+        .btn-impact {
+            width: 100%;
+            background: linear-gradient(135deg, var(--rojo-primario), var(--rojo-vibrante));
             color: white;
             border: none;
-            transition: 0.3s ease;
+            border-radius: 16px;
+            padding: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 15px 30px -5px rgba(90, 15, 20, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-top: 1rem;
         }
 
-        .btn-registro:hover {
-            background: linear-gradient(135deg, var(--color-rojo-intenso), var(--color-vino));
-            transform: scale(1.02);
+        .btn-impact:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -5px rgba(90, 15, 20, 0.4);
+        }
+
+        .btn-impact:active {
+            transform: scale(0.98);
+        }
+
+        
+        .back-to-login {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .back-to-login b {
+            color: var(--rojo-primario);
+        }
+
+        .back-to-login:hover {
+            color: var(--rojo-vibrante);
+        }
+
+        .error-toast {
+            background: #fff1f2;
+            color: #be123c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            border-left: 4px solid #be123c;
         }
     </style>
 </head>
+
 <body>
-<div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card p-4 shadow registro-box">
-        <h3 class="text-center mb-4">Registro de Usuario</h3>
+
+    <div class="registro-card">
+        <h3>Únete a Cueromanía</h3>
+        <p class="welcome-text">Crea tu cuenta en pocos pasos</p>
+
         <form method="post">
             {% csrf_token %}
+
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <input type="text" name="id_usuario" class="form-control" placeholder="Cédula" required>
+                <div class="col-md-6">
+                    <div class="input-group-modern">
+                        <label>Número de Cédula</label>
+                        <input type="text" name="id_usuario" required placeholder="Ej: 12345678">
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <input type="text" name="contacto" class="form-control" placeholder="Contacto">
+                <div class="col-md-6">
+                    <div class="input-group-modern">
+                        <label>Teléfono de Contacto</label>
+                        <input type="text" name="contacto" placeholder="Ej: 300 123 4567">
+                    </div>
                 </div>
             </div>
+
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <input type="text" name="primer_nombre" class="form-control" placeholder="Primer nombre" required>
+                <div class="col-md-6">
+                    <div class="input-group-modern">
+                        <label>Primer Nombre</label>
+                        <input type="text" name="primer_nombre" required placeholder="Tu nombre">
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <input type="text" name="segundo_nombre" class="form-control" placeholder="Segundo nombre">
+                <div class="col-md-6">
+                    <div class="input-group-modern">
+                        <label>Segundo Nombre</label>
+                        <input type="text" name="segundo_nombre" placeholder="Opcional">
+                    </div>
                 </div>
             </div>
+
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <input type="text" name="primer_apellido" class="form-control" placeholder="Primer apellido" required>
+                <div class="col-md-6">
+                    <div class="input-group-modern">
+                        <label>Primer Apellido</label>
+                        <input type="text" name="primer_apellido" required placeholder="Tu apellido">
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <input type="text" name="segundo_apellido" class="form-control" placeholder="Segundo apellido">
+                <div class="col-md-6">
+                    <div class="input-group-modern">
+                        <label>Segundo Apellido</label>
+                        <input type="text" name="segundo_apellido" placeholder="Opcional">
+                    </div>
                 </div>
             </div>
-            <div class="mb-3">
-                <input type="text" name="direccion" class="form-control" placeholder="Dirección">
+
+            <div class="input-group-modern">
+                <label>Dirección de Envío</label>
+                <input type="text" name="direccion" placeholder="Calle, Carrera, Ciudad...">
             </div>
-            <div class="mb-3">
-                <input type="email" name="gmail" class="form-control" placeholder="Correo electrónico" required>
+
+            <div class="input-group-modern">
+                <label>Correo Electrónico</label>
+                <input type="email" name="gmail" required placeholder="ejemplo@correo.com">
             </div>
-            <div class="mb-3">
-                <input type="password" name="clave" class="form-control" placeholder="Contraseña" required>
+
+            <div class="input-group-modern">
+                <label>Contraseña</label>
+                <input type="password" name="clave" required placeholder="Crea una clave segura">
             </div>
-            <button type="submit" class="btn btn-registro w-100">Registrarse</button>
+
+            <button type="submit" class="btn-impact">
+                Completar Registro
+            </button>
+
+            <a href="{% url 'login' %}" class="back-to-login">
+                ¿Ya tienes una cuenta? <b>Inicia Sesión</b>
+            </a>
+
+            {% if error %}
+            <div class="error-toast">
+                {{ error }}
+            </div>
+            {% endif %}
         </form>
     </div>
-</div>
+
 </body>
 </html>

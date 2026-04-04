@@ -1,78 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cueromania</title>
+    <title>Cueromanía | Tienda de Cuero Artesanal</title>
     {% load static %}
-    
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/cliente.css' %}">
 </head>
 <body>
-    <header class="container1 d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center">
-            <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" width="50" height="50">
-            <h3 class="mb-0 ms-2">Cueromania</h3>
-        </div>
-        <div class="search-bar">
-            <form action="{% url 'filtrar_producto'%}" method="GET" class="d-flex">
-                <input type="text" id="q" name="q" placeholder="Buscar productos..." value="{{ query|default_if_none:'' }}" required>
-                <button type="submit" class="btn btn-comprar ms-2">Buscar</button>
-            </form>
-        </div>
 
-        <div class="usuario-nombre d-flex align-items-center">
-            <svg class="bi bi-cart ms-3" style="margin-right: 20px;" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
-                <a href="{% url 'carro'%}"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-            </svg>
-            
-            <img src="{% static 'img/icono.png' %}" alt="Usuario" width="40" height="40" class="me-2">
-            {{ usuario.primer_nombre }} {{ usuario.primer_apellido }}
-            <ul class="menu_list">
-                <li class="menu_item"><a href="{% url 'perfil' %}" class="menu_link">Perfil</a></li>
-                <li class="menu_item"><a href="{% url 'logout' %}" class="menu_link">Cerrar Sesión</a></li>
-            </ul>
+    <header class="navbar-main">
+        <div class="container d-flex align-items-center justify-content-between py-2">
+            <div class="d-flex align-items-center">
+                <a href="{% url 'cliente' %}" class="text-decoration-none d-flex align-items-center">
+                    <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" width="50" height="50" style="border-radius: 12px;">
+                    <h3 class="brand-title mb-0 ms-2">Cueromanía</h3>
+                </a>
+            </div>
+
+            <div class="search-wrapper">
+                <form action="{% url 'filtrar_producto' %}" method="GET" class="d-flex align-items-center">
+                    <div style="position: relative; width: 100%;">
+                        <input type="text" name="q" placeholder="Buscar productos..." value="{{ query|default:'' }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-comprar ms-2">Buscar</button>
+                </form>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <a href="{% url 'carro' %}" class="text-dark">
+                    <svg class="bi bi-cart me-3" xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                    </svg>
+                </a>
+                
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-bs-toggle="dropdown">
+                        <img src="{% static 'img/icono.png' %}" alt="Usuario" width="35" height="35" class="rounded-circle me-2">
+                        <span class="fw-bold">{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end user-dropdown border-0 shadow">
+                        <li><a class="dropdown-item py-2" href="{% url 'perfil' %}">Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </header>
 
-    <nav class="d-flex align-items-center justify-content-center py-3">
-        <ul class="nav">
-            <li class="nav-item"><a class="menu-link" href="{% url 'cliente' %}">Inicio </a></li>
-            <li class="nav-item"><a class="nav-link-lujo text-decoration-none" href="{% url 'nosotros' %}">Nosotros</a></li>
-            <li class="nav-item"><a class="menu-link" href="{% url 'personalizacion' %}">Personalización</a></li>
-            <li class="nav-item"><a class="menu-link" href="{% url 'valoraciones' %}">Valoraciones</a></li>
-            <li class="nav-item"><a class="menu-link" href="">Contacto</a></li>
-        </ul>
+    <nav class="bg-white py-3 shadow-sm">
+        <div class="container">
+            <ul class="nav nav-pills justify-content-center">
+                <li class="nav-item"><a class="nav-link" href="{% url 'cliente' %}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'nosotros' %}">Nosotros</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'personalizacion' %}">Personalización</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'valoraciones' %}">Valoraciones</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+            </ul>
+        </div>
     </nav>
+
     <main class="container py-5">
         {% block content %}
-        <h1 class="text-center">Bienvenido a Cueromania</h1>
-        <p class="text-center subtitulo">Descubre nuestra exclusiva colección de artículos de cuero</p>
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold mb-2">Bienvenido a Cueromanía</h1>
+                <p class="text-muted">Descubre nuestra exclusiva colección de artículos de cuero</p>
+            </div>
+        </div>
+
         <div class="row">
             {% for producto in productos %}
-            <div class="col-md-4 mb-4">
-                <div class="card producto-card shadow-sm h-100">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card producto-card h-100 shadow-sm border-0">
+                    <div class="img-container">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                        {% else %}
+                            <img src="{% static 'img/placeholder.png' %}" alt="Sin imagen">
+                        {% endif %}
+                    </div>
                     
-                    {% if producto.imagen %}
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-                    {% else %}
-                        <img src="{% static 'img/placeholder.png' %}" alt="{{ producto.nombre }}">
-                    {% endif %}
-
-                    <div class="card-body">
-                        <h5 class="card-title">{{ producto.nombre }}</h5>
-                        <p class="card-text text-muted">{{ producto.descripcion }}</p>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="card-title fw-bold mb-2">{{ producto.nombre }}</h5>
+                        <p class="card-text text-muted small flex-grow-1">{{ producto.descripcion|truncatechars:90 }}</p>
                         
-                        <h4 class="precio fw-bold" style="position: relative; top: 10%;">${{ producto.precio }}</h4>
-                        <div class="d-flex align-items-center gap-2" style="position: relative; left: 70%; top: -20%;">
-                            <button class="btn btn-sm" onclick="restar({{ producto.id_producto }})">-</button>
-                            <span id="cantidad-{{ producto.id_producto }}" class="mx-2">{{ producto.cantidad_en_carro }}</span>
-                            <button class="btn btn-sm" onclick="sumar({{ producto.id_producto }})">+</button>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="precio-tag">${{ producto.precio }}</span>
+                            
+                            <div class="d-flex align-items-center bg-light rounded-pill px-2 py-1">
+                                <button class="btn btn-sm border-0" onclick="restar({{ producto.id_producto }})">-</button>
+                                <span id="cantidad-{{ producto.id_producto }}" class="mx-2 fw-bold">{{ producto.cantidad_en_carro|default:0 }}</span>
+                                <button class="btn btn-sm border-0" onclick="sumar({{ producto.id_producto }})">+</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent border-0">
-                        <a href="/carrito/agregar/{{ producto.id_producto }}/" class="btn btn-comprar w-100">Agregar al carrito</a>
+                    
+                    <div class="card-footer bg-white border-0 p-4 pt-0">
+                        <a href="/carrito/agregar/{{ producto.id_producto }}/" class="btn btn-comprar w-100 text-white">
+                            Agregar al Carrito
+                        </a>
                     </div>
                 </div>
             </div>
@@ -81,12 +110,13 @@
         {% endblock %}
     </main>
 
-<footer class="text-center py-4">
-        <p>&copy; 2026 Cueromania. Todos los derechos reservados.</p>
+    <footer class="py-4 text-center">
+        <div class="container">
+            <p class="mb-0 text-muted">&copy; 2026 Cueromanía. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         function sumar(id) {
             fetch(`/carrito/sumar/${id}/`)
@@ -103,7 +133,5 @@
             });
         }
     </script>
-</body>
-</html>
 </body>
 </html>

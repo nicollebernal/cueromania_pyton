@@ -2,68 +2,242 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión</title>
+    <title>Iniciar Sesión | Cueromanía</title>
 
     {% load static %}
 
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/miapp.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --rojo-primario: #5a0f14;
+            --rojo-vibrante: #8b1c24;
+            --blanco-puro: #ffffff;
+            --gris-suave: #f8fafc;
+            --texto-deep: #0f172a;
+        }
+
+        body {
+            background-color: var(--gris-suave);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 28, 36, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(90, 15, 20, 0.05) 0px, transparent 50%);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Estructura Split (Diseño Minimalista Moderno) */
+        .login-card {
+            background: var(--blanco-puro);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(90, 15, 20, 0.15);
+            width: 100%;
+            max-width: 500px;
+            padding: 3.5rem;
+            border: 1px solid rgba(0,0,0,0.03);
+            text-align: center;
+        }
+
+        .brand-logo {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 35%;
+            margin-bottom: 1.5rem;
+            transition: transform 0.5s ease;
+        }
+
+        .login-card:hover .brand-logo {
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        h3 {
+            font-weight: 800;
+            color: var(--rojo-primario);
+            letter-spacing: -1.5px;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p.welcome-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Inputs Flotantes Modernos */
+        .input-group-modern {
+            position: relative;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group-modern label {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            display: block;
+            padding-left: 5px;
+        }
+
+        .input-group-modern input {
+            width: 100%;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 16px 16px 16px 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--texto-deep);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-group-modern input:focus {
+            background: var(--blanco-puro);
+            border-color: var(--rojo-vibrante);
+            box-shadow: 0 10px 20px -10px rgba(139, 28, 36, 0.2);
+            outline: none;
+        }
+
+        .input-group-modern img {
+            position: absolute;
+            left: 18px;
+            bottom: 18px;
+            width: 20px;
+            opacity: 0.4;
+            transition: 0.3s;
+            filter: grayscale(1);
+        }
+
+        .input-group-modern input:focus + img {
+            opacity: 1;
+            filter: grayscale(0) invert(15%) sepia(45%) saturate(4500%) hue-rotate(345deg);
+        }
+
+        /* Enlaces Estilizados */
+        .form-footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: -0.5rem;
+            margin-bottom: 2.5rem;
+            font-size: 0.85rem;
+        }
+
+        .link-forgot {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .link-forgot:hover {
+            color: var(--rojo-vibrante);
+        }
+
+        .link-register {
+            color: var(--rojo-primario);
+            font-weight: 800;
+            text-decoration: none;
+            background: rgba(90, 15, 20, 0.05);
+            padding: 8px 16px;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .link-register:hover {
+            background: var(--rojo-primario);
+            color: white;
+        }
+
+        /* Botón de Impacto */
+        .btn-impact {
+            width: 100%;
+            background: linear-gradient(135deg, var(--rojo-primario), var(--rojo-vibrante));
+            color: white;
+            border: none;
+            border-radius: 18px;
+            padding: 18px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 15px 30px -5px rgba(90, 15, 20, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-impact:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -5px rgba(90, 15, 20, 0.4);
+        }
+
+        .btn-impact:active {
+            transform: scale(0.98);
+        }
+
+        .error-toast {
+            background: #fff1f2;
+            color: #be123c;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            border-left: 4px solid #be123c;
+        }
+    </style>
 </head>
 
-<body >
+<body>
 
-<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height:100vh;">
-
-    <img src="{% static 'img/logo.jpeg' %}" 
-         alt="Logo" 
-         class="mb-3"
-         style="width:120px;">
-
-    
-    <form method="post" class="card p-4 " style="width:100%; max-width:520px; border-radius:15px;">
+    <div class="login-card">
+        <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromanía" class="brand-logo">
         
-        {% csrf_token %}
+        <h3>Bienvenido</h3>
+        <p class="welcome-text">Accede a tu cuenta </p>
 
-        <h3 class="text-center mb-4">Iniciar Sesión</h3>
+        <form method="post">
+            {% csrf_token %}
 
-        <div class="correo mb-3 position-relative">
-           <label for="gmail" class="form-label">Correo electrónico</label>
-           <input type="text" id="gmail" name="gmail" class="form-control" required placeholder="Email" style="padding-left: 40px;">
-           <img src="https://img.icons8.com/ios/50/gmail--v1.png" alt="gmail" style="position: absolute; left: 12px; top: 40px; width: 20px; height: 20px; opacity: 0.7; margin-right: 10px;">
-        </div>
-
-
-
-        <div class="contrasena mb-3 position-relative">
-            <label for="clave" class="form-label">Contraseña</label>
-            <input type="password" id="clave" name="clave" class="form-control" required placeholder ="Password" style = " padding-left: 40px;">
-            <img src="https://img.icons8.com/ios/50/password--v1.png" alt="password--v1"alt="password" style="position: absolute; left: 12px; top: 40px; width: 20px; height: 20px; opacity: 0.7; margin-right: 10px;"/>
-        </div>
-
-        <div class=" mb-3 d-flex justify-content-between">
-            <a href="/recuperar" class="link-light" style="font-size: 0.9rem;">
-                ¿Olvidaste tu contraseña?
-            </a>
-            <div>
-                <span style="font-size: 0.9rem; ">¿No tienes cuenta?</span>
-                <a href="{% url 'registrar_usuario' %}" class="link-danger fw-bold" style="margin-left: 5px;">Regístrate</a>
+            <div class="input-group-modern">
+                <label for="gmail">Correo Electrónico</label>
+                <input type="text" id="gmail" name="gmail" required placeholder="ejemplo@correo.com">
+                <img src="https://img.icons8.com/ios-glyphs/60/filled-message.png" alt="email-icon">
             </div>
-    
-        </div>
-    
-      
 
-        <button type="submit" class="btn btn-primary" >
-            Iniciar Sesión
-        </button>
+            <div class="input-group-modern">
+                <label for="clave">Contraseña</label>
+                <input type="password" id="clave" name="clave" required placeholder="••••••••">
+                <img src="https://img.icons8.com/ios-glyphs/60/lock.png" alt="pass-icon">
+            </div>
 
-        {% if error %}
-        <p class="text-danger text-center mt-3">{{ error }}</p>
-        {% endif %}
+            <div class="form-footer-actions">
+                <a href="/recuperar" class="link-forgot">¿Olvidaste tu contraseña?</a>
+                <div>
+                    <a href="{% url 'registrar_usuario' %}" class="link-register">Crear Cuenta</a>
+                </div>
+            </div>
 
-    </form>
+            <button type="submit" class="btn-impact">
+                ingresar
+            </button>
 
-</div>
+            {% if error %}
+            <div class="error-toast">
+                {{ error }}
+            </div>
+            {% endif %}
+        </form>
+    </div>
 
 </body>
 </html>
