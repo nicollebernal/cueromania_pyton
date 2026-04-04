@@ -10,10 +10,12 @@ from .models import (
 )
 from Carrito.carro import Carro
 
-# --- VISTAS DE ACCESO Y PERFIL ---
+
 
 def login_view(request):
     if request.method == 'POST':
+        request.session.flush()
+        
         gmail = request.POST.get('gmail', '').strip()
         clave = request.POST.get('clave', '')
 
@@ -44,10 +46,12 @@ def logout_view(request):
     return redirect('/')
 
 def registrar_usuario(request):
+    request.session.flush()
     if request.method == 'POST':
         id_usuario = request.POST['id_usuario']
         clave = make_password(request.POST['clave'])
-        rol_cliente = Rol.objects.get(nombre_rol='cliente')
+        rol_cliente = Rol.objects.get(nombre_rol__iexact='cliente')
+
 
         usuario = Usuario.objects.create(
             id_usuario=id_usuario,
@@ -62,10 +66,14 @@ def registrar_usuario(request):
             id_rol=rol_cliente
         )
         usuario.save()
+        request.session.flush()
+
         return redirect('login')
 
     roles = Rol.objects.all()
     return render(request, 'login/registro.html', {'roles': roles})
+
+
 
 def cliente_perfil(request):
     usuario_id = request.session.get('usuario_id')
@@ -82,7 +90,6 @@ def cliente_perfil(request):
         mensaje = 'Perfil actualizado correctamente.'
     return render(request, 'cliente/perfil.html', {'usuario': usuario, 'mensaje': mensaje})
 
-# --- DASHBOARDS Y TIENDA ---
 
 def empleado_dashboard(request):
     return render(request, 'Empleado/empleado.html')
@@ -120,7 +127,7 @@ def filtrar_producto(request):
         producto.cantidad_en_carro = carro.carro.get(str(producto.id_producto), {}).get('cantidad', 0)
     return render(request, 'cliente/cliente.html', {'usuario': usuario, 'productos': productos, 'query': query})
 
-# --- PERSONALIZACIÓN Y VALORACIONES ---
+
 
 def personalizacion(request):
     usuario_id = request.session.get('usuario_id')
@@ -194,7 +201,10 @@ def crear_valoracion(request, producto_id):
     return render(request, 'cliente/crear_valoracion.html', {'producto': producto})
 
 def nosotros(request):
+    usuario_id = request.session.get('usuario_id')
+    if usuario_id:
+        usuario = Usuario.objects.get(id_usuario=usuario_id)
+        return render(request, 'cliente/nosotros.html', {'usuario': usuario})
     return render(request, 'cliente/nosotros.html')
 def contacto(request):
-   
     return render(request, 'tienda/contacto.html')

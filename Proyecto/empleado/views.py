@@ -31,40 +31,6 @@ def requiere_rol_empleado(view_func):
     return wrapper
 
 
-def login_view(request):
-    if request.method == 'POST':
-        gmail = request.POST.get('gmail', '').strip()
-        clave = request.POST.get('clave', '').strip()
-
-        usuario = Usuario.objects.filter(gmail=gmail).first()
-
-        if usuario:
-            if usuario.verificar_clave(clave):
-                request.session['usuario_id'] = usuario.id_usuario
-
-                rol_nombre = usuario.id_rol.nombre_rol if usuario.id_rol else None
-
-                if rol_nombre == 'administrador':
-                    return redirect('administrador')
-
-                elif rol_nombre == 'empleado':
-                    return redirect('empleado')
-
-                elif rol_nombre == 'cliente':
-                    return redirect('cliente')
-
-                else:
-                    return render(request, 'login/login.html', {'error': 'Rol no válido'})
-            else:
-                return render(request, 'login/login.html', {
-                    'error': 'Contraseña incorrecta'
-                })
-        else:
-            return render(request, 'login/login.html', {
-                'error': 'Usuario no encontrado'
-            })
-
-    return render(request, 'login/login.html')
 
 
 def empleado_dashboard(request):
