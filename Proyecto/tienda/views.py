@@ -271,17 +271,9 @@ def password_reset_request(request):
         
         # Generar token y UID
         uid = urlsafe_base64_encode(force_bytes(usuario.pk))
-        # Token seguro personalizado sin depender de atributos de Django User
-        random_part = secrets.token_urlsafe(32)
-        token = hashlib.sha256(f'{usuario.id_usuario}{random_part}{usuario.gmail}'.encode()).hexdigest()
-        
-        # Guardar token en sesión con timestamp para validar expiración
-        request.session[f'reset_token_{usuario.id_usuario}'] = {
-            'token': token,
-            'timestamp': datetime.now().timestamp(),
-            'random': random_part
-        }
-        request.session.modified = True
+        # Token verificable sin sesión: usa contraseña y timestamp
+        timestamp_24h = int(datetime.now().timestamp() / 86400) * 86400
+        token = hashlib.sha256(f'{usuario.id_usuario}|{usuario.clave}|{timestamp_24h}'.encode()).hexdigest()
         
         # Construir enlace de reset
         protocol = 'https' if request.is_secure() else 'http'
@@ -409,18 +401,19 @@ def password_reset_confirm(request, uidb64, token):
     except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
         usuario = None
     
-    # Verificar token y expiración (24 horas)
+    # Verificar token sin sesión: regenerar token esperado y comparar
     is_valid_token = False
     if usuario is not None:
-        session_key = f'reset_token_{usuario.id_usuario}'
-        if session_key in request.session:
-            stored_data = request.session.get(session_key, {})
-            stored_token = stored_data.get('token')
-            timestamp = stored_data.get('timestamp', 0)
-            
-            # Verificar si el token coincide y no ha expirado (86400 segundos = 24 horas)
-            if stored_token == token and (datetime.now().timestamp() - timestamp) < 86400:
-                is_valid_token = True
+        # Token debe ser un hash de: id|contraseña|timestamp_24h
+        timestamp_24h = int(datetime.now().timestamp() / 86400) * 86400
+        expected_token = hashlib.sha256(f'{usuario.id_usuario}|{usuario.clave}|{timestamp_24h}'.encode()).hexdigest()
+        
+        # También aceptar token del día anterior (tokens válidos por 24h desde su creación)
+        timestamp_24h_prev = timestamp_24h - 86400
+        expected_token_prev = hashlib.sha256(f'{usuario.id_usuario}|{usuario.clave}|{timestamp_24h_prev}'.encode()).hexdigest()
+        
+        if token == expected_token or token == expected_token_prev:
+            is_valid_token = True
     
     if usuario is None or not is_valid_token:
         messages.error(request, 'El enlace de recuperación es inválido o ha expirado.')
@@ -476,10 +469,6 @@ def password_reset_confirm(request, uidb64, token):
         # Actualizar contraseña
         usuario.clave = make_password(clave_nueva)
         usuario.save()
-        
-        # Limpiar token de sesión
-        del request.session[f'reset_token_{usuario.id_usuario}']
-        request.session.modified = True
         
         messages.success(request, 'Tu contraseña ha sido actualizada correctamente. Inicia sesión con tu nueva contraseña.')
         return redirect('login')
