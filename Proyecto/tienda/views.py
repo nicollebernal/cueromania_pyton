@@ -1,8 +1,15 @@
-from datetime import date
+from datetime import date, timedelta, datetime
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.db.models import Avg, OuterRef, Subquery
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.conf import settings
+import hashlib
+import secrets
+import logging
 from .models import (
     Usuario, Producto, Rol, Personalizacion, 
     Valoracion, Venta, DetalleVenta, 
@@ -246,3 +253,240 @@ def nosotros(request):
     return render(request, 'cliente/nosotros.html')
 def contacto(request):
     return render(request, 'tienda/contacto.html')
+
+
+# --- RECUPERACIÓN DE CONTRASEÑA ---
+
+def password_reset_request(request):
+    """Solicita recuperación de contraseña por email."""
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        
+        try:
+            usuario = Usuario.objects.get(gmail__iexact=email)
+        except Usuario.DoesNotExist:
+            # No revelar si el email existe
+            messages.success(request, 'Si el email existe en nuestros registros, recibirás un enlace para recuperar tu contraseña.')
+            return redirect('password_reset_done')
+        
+        # Generar token y UID
+        uid = urlsafe_base64_encode(force_bytes(usuario.pk))
+        # Token seguro personalizado sin depender de atributos de Django User
+        random_part = secrets.token_urlsafe(32)
+        token = hashlib.sha256(f'{usuario.id_usuario}{random_part}{usuario.gmail}'.encode()).hexdigest()
+        
+        # Guardar token en sesión con timestamp para validar expiración
+        request.session[f'reset_token_{usuario.id_usuario}'] = {
+            'token': token,
+            'timestamp': datetime.now().timestamp(),
+            'random': random_part
+        }
+        request.session.modified = True
+        
+        # Construir enlace de reset
+        protocol = 'https' if request.is_secure() else 'http'
+        domain = request.get_host()
+        reset_url = f'{protocol}://{domain}/cambiar-contraseña/{uid}/{token}/'
+        
+        # Contenido del email HTML con logo
+        subject = 'Recupera tu contraseña - Cueromanía'
+        logo_url = f'{protocol}://{domain}/static/img/logo.jpeg'
+        
+        html_message = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                    
+                    <!-- Header con logo -->
+                    <div style="background: linear-gradient(135deg, #5a0f14 0%, #8b1c24 100%); padding: 30px; text-align: center;">
+                        <img src="{logo_url}" alt="Cueromanía" style="max-width: 150px; height: auto; margin-bottom: 15px; border-radius: 8px;">
+                        <h1 style="color: white; margin: 0; font-size: 28px;">Cueromanía</h1>
+                    </div>
+                    
+                    <!-- Contenido -->
+                    <div style="padding: 40px;">
+                        <h2 style="color: #5a0f14; margin-top: 0;">¡Hola {usuario.primer_nombre}!</h2>
+                        <p style="color: #333; font-size: 16px; line-height: 1.6;">
+                            Recibimos una solicitud para recuperar tu contraseña en <strong>Cueromanía</strong>.
+                        </p>
+                        
+                        <p style="color: #333; font-size: 16px; line-height: 1.6;">
+                            Haz clic en el botón de abajo para crear una nueva contraseña:
+                        </p>
+                        
+                        <!-- Botón -->
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{reset_url}" style="background-color: #8b1c24; color: white; padding: 14px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+                                Recuperar Contraseña
+                            </a>
+                        </div>
+                        
+                        <!-- Información adicional -->
+                        <p style="color: #999; font-size: 13px; line-height: 1.6;">
+                            Si el botón anterior no funciona, copia y pega este enlace en tu navegador:<br>
+                            <a href="{reset_url}" style="color: #8b1c24; text-decoration: none; word-break: break-all;">{reset_url}</a>
+                        </p>
+                        
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                        
+                        <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                            ⏰ <strong>Este enlace expira en 24 horas</strong>
+                        </p>
+                        
+                        <p style="color: #666; font-size: 14px;">
+                            Si no solicitaste recuperar tu contraseña, puedes ignorar este email de forma segura.
+                        </p>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div style="background-color: #f9f9f9; padding: 20px; text-align: center; border-top: 1px solid #eee;">
+                        <p style="color: #999; font-size: 12px; margin: 0;">
+                            <strong>Cueromanía S.A.S.</strong><br>
+                            Somos expertos en cuero de calidad premium
+                        </p>
+                        <p style="color: #999; font-size: 12px; margin: 10px 0 0 0;">
+                            © 2026 Cueromanía. Todos los derechos reservados.
+                        </p>
+                    </div>
+                    
+                </div>
+            </body>
+        </html>
+        """
+        
+        # Mensaje de texto plano como fallback
+        text_message = f"""
+Hola {usuario.primer_nombre},
+
+Recibimos una solicitud para recuperar tu contraseña en Cueromanía.
+Haz clic en el siguiente enlace para crear una nueva contraseña:
+
+{reset_url}
+
+Este enlace expira en 24 horas.
+
+Si no solicitaste esto, ignora este email.
+
+Saludos,
+Equipo de Cueromanía
+"""
+        
+        try:
+            from django.core.mail import EmailMultiAlternatives
+            msg = EmailMultiAlternatives(
+                subject,
+                text_message,
+                'Cueromanía <' + settings.DEFAULT_FROM_EMAIL + '>',
+                [usuario.gmail]
+            )
+            msg.attach_alternative(html_message, "text/html")
+            msg.send(fail_silently=False)
+            print(f"[DEBUG] Email enviado exitosamente a {usuario.gmail}")
+            messages.success(request, 'Si el email existe en nuestros registros, recibirás un enlace para recuperar tu contraseña.')
+            return redirect('password_reset_done')
+        except Exception as e:
+            # Log seguro sin exponer PII o detalles internos
+            logger = logging.getLogger(__name__)
+            logger.error('Password reset email sending failed')
+            print(f"[DEBUG] Error enviando email: {str(e)}")
+            # Mismo mensaje de éxito para no revelar información
+            messages.success(request, 'Si el email existe en nuestros registros, recibirás un enlace para recuperar tu contraseña.')
+            return redirect('password_reset_done')
+    
+    return render(request, 'login/password_reset_email.html')
+
+
+def password_reset_done(request):
+    """Confirma que el email fue enviado."""
+    return render(request, 'login/password_reset_done.html')
+
+
+def password_reset_confirm(request, uidb64, token):
+    """Confirma el token y permite cambiar la contraseña."""
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        usuario = Usuario.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+        usuario = None
+    
+    # Verificar token y expiración (24 horas)
+    is_valid_token = False
+    if usuario is not None:
+        session_key = f'reset_token_{usuario.id_usuario}'
+        if session_key in request.session:
+            stored_data = request.session.get(session_key, {})
+            stored_token = stored_data.get('token')
+            timestamp = stored_data.get('timestamp', 0)
+            
+            # Verificar si el token coincide y no ha expirado (86400 segundos = 24 horas)
+            if stored_token == token and (datetime.now().timestamp() - timestamp) < 86400:
+                is_valid_token = True
+    
+    if usuario is None or not is_valid_token:
+        messages.error(request, 'El enlace de recuperación es inválido o ha expirado.')
+        return redirect('login')
+    
+    if request.method == 'POST':
+        clave_vieja = request.POST.get('clave_vieja', '').strip()
+        clave_nueva = request.POST.get('clave_nueva', '').strip()
+        clave_confirmar = request.POST.get('clave_confirmar', '').strip()
+        
+        # Validar contraseña vieja
+        if not clave_vieja:
+            messages.error(request, 'Debes ingresar tu contraseña actual.')
+            return render(request, 'login/password_reset_confirm.html', {
+                'uidb64': uidb64, 
+                'token': token,
+                'usuario': usuario
+            })
+        
+        if not usuario.verificar_clave(clave_vieja):
+            messages.error(request, 'La contraseña actual es incorrecta.')
+            return render(request, 'login/password_reset_confirm.html', {
+                'uidb64': uidb64, 
+                'token': token,
+                'usuario': usuario
+            })
+        
+        # Validar contraseña nueva
+        if not clave_nueva:
+            messages.error(request, 'La contraseña no puede estar vacía.')
+            return render(request, 'login/password_reset_confirm.html', {
+                'uidb64': uidb64, 
+                'token': token,
+                'usuario': usuario
+            })
+        
+        if clave_nueva != clave_confirmar:
+            messages.error(request, 'Las contraseñas nuevas no coinciden.')
+            return render(request, 'login/password_reset_confirm.html', {
+                'uidb64': uidb64, 
+                'token': token,
+                'usuario': usuario
+            })
+        
+        if len(clave_nueva) < 6:
+            messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
+            return render(request, 'login/password_reset_confirm.html', {
+                'uidb64': uidb64, 
+                'token': token,
+                'usuario': usuario
+            })
+        
+        # Actualizar contraseña
+        usuario.clave = make_password(clave_nueva)
+        usuario.save()
+        
+        # Limpiar token de sesión
+        del request.session[f'reset_token_{usuario.id_usuario}']
+        request.session.modified = True
+        
+        messages.success(request, 'Tu contraseña ha sido actualizada correctamente. Inicia sesión con tu nueva contraseña.')
+        return redirect('login')
+    
+    return render(request, 'login/password_reset_confirm.html', {'uidb64': uidb64, 'token': token})
+
+
+def password_reset_complete(request):
+    """Confirma que la contraseña fue reseteada."""
+    return render(request, 'login/password_reset_complete.html')

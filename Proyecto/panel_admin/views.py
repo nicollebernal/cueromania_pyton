@@ -950,3 +950,60 @@ def valoracion_eliminar(request, pk):
             'usuario': request.admin_usuario,
         },
     )
+
+
+@solo_administrador
+def emails_enviados(request):
+    """Vista para ver los emails enviados guardados en archivos."""
+    import os
+    from django.conf import settings
+    
+    emails = []
+    email_dir = getattr(settings, 'EMAIL_FILE_PATH', None)
+    
+    if email_dir and os.path.exists(email_dir):
+        # Obtener lista de archivos de email ordenados por fecha (más recientes primero)
+        email_files = [f for f in os.listdir(email_dir) if f.endswith('.log')]
+        email_files.sort(reverse=True)
+        
+        for filename in email_files:
+            filepath = os.path.join(email_dir, filename)
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    
+                # Extraer información del email
+                lines = content.split('\n')
+                subject = ''
+                to_email = ''
+                date_sent = ''
+                
+                for line in lines:
+                    if line.startswith('Subject:'):
+                        subject = line.replace('Subject:', '').strip()
+                    elif line.startswith('To:'):
+                        to_email = line.replace('To:', '').strip()
+                    elif line.startswith('Date:'):
+                        date_sent = line.replace('Date:', '').strip()
+                
+                emails.append({
+                    'filename': filename,
+                    'filepath': filepath,
+                    'subject': subject,
+                    'to_email': to_email,
+                    'date_sent': date_sent,
+                    'content': content,
+                })
+            except Exception as e:
+                # Si hay error leyendo el archivo, continuar
+                continue
+    
+    return render(
+        request,
+        'panel_admin/emails_enviados.html',
+        {
+            'titulo': 'Emails Enviados',
+            'emails': emails,
+            'usuario': request.admin_usuario,
+        },
+    )
