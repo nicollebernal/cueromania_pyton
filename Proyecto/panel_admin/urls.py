@@ -49,4 +49,5 @@ urlpatterns = [
     path('personalizacion/<int:pk>/', views.personalizacion_ver, name='panel_personalizacion_ver'),
     path('valoraciones/', views.valoraciones_lista, name='panel_valoraciones'),
     path('valoraciones/eliminar/<int:pk>/', views.valoracion_eliminar, name='panel_valoracion_eliminar'),
+    path('emails/', views.emails_enviados, name='panel_emails_enviados'),
 ]

@@ -3,8 +3,9 @@ from decimal import Decimal
 from io import BytesIO
 
 from django.contrib import messages
+from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import Avg, Prefetch
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from tienda.models import (
     Producto,
@@ -758,6 +759,7 @@ def personalizacion_lista(request):
             'id_usuario', 'id_categoria', 'id_color', 'id_marca', 'id_genero'
         )
         .order_by('-id_personalizacion')
+        .distinct()
     )
     return render(
         request,
@@ -768,12 +770,16 @@ def personalizacion_lista(request):
 
 @solo_administrador
 def personalizacion_ver(request, pk):
-    obj = get_object_or_404(
+    obj = (
         Personalizacion.objects.select_related(
             'id_usuario', 'id_categoria', 'id_color', 'id_marca', 'id_genero'
-        ),
-        pk=pk,
+        )
+        .filter(pk=pk)
+        .distinct()
+        .first()
     )
+    if not obj:
+        raise Http404('Personalización no encontrada')
     return render(
         request,
         'panel_admin/personalizacion_ver.html',
@@ -783,11 +789,97 @@ def personalizacion_ver(request, pk):
 
 @solo_administrador
 def personalizacion_editar(request, pk):
-    obj = get_object_or_404(Personalizacion, pk=pk)
+    obj = Personalizacion.objects.filter(pk=pk).distinct().first()
+    if not obj:
+        raise Http404('Personalización no encontrada')
     if request.method == 'POST':
         form = PersonalizacionForm(request.POST, request.FILES, instance=obj)
-        if form.is_valid():
-            form.save()
+        try:
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Personalización actualizada.')
+                return redirect('panel_personalizacion')
+            else:
+                messages.error(request, 'No se pudo guardar la personalización. Por favor revisa los datos.')
+        except MultipleObjectsReturned:
+            # Fallback seguro: validar cada relación por identificador antes de guardar.
+            def _get_unique(model, value):
+                if not value:
+                    return None
+                qs = model.objects.filter(pk=value)
+                return qs.first() if qs.count() == 1 else None
+
+            obj.descripcion = request.POST.get('descripcion', obj.descripcion).strip()
+            fecha_raw = request.POST.get('fecha_solicitud', '').strip()
+            if fecha_raw:
+                try:
+                    obj.fecha_solicitud = date.fromisoformat(fecha_raw)
+                except ValueError:
+                    pass
+
+            id_usuario_value = request.POST.get('id_usuario')
+            if id_usuario_value:
+                usuario = _get_unique(Usuario, id_usuario_value)
+                if not usuario:
+                    messages.error(request, 'No se pudo actualizar la personalización: cliente no es único o no existe.')
+                    return render(
+                        request,
+                        'panel_admin/personalizacion_form.html',
+                        {'form': form, 'titulo': 'Editar personalización', 'obj': obj, 'usuario': request.admin_usuario},
+                    )
+                obj.id_usuario = usuario
+
+            id_categoria_value = request.POST.get('id_categoria')
+            if id_categoria_value:
+                categoria_obj = _get_unique(categoria, id_categoria_value)
+                if not categoria_obj:
+                    messages.error(request, 'No se pudo actualizar la personalización: categoría no es única o no existe.')
+                    return render(
+                        request,
+                        'panel_admin/personalizacion_form.html',
+                        {'form': form, 'titulo': 'Editar personalización', 'obj': obj, 'usuario': request.admin_usuario},
+                    )
+                obj.id_categoria = categoria_obj
+
+            id_color_value = request.POST.get('id_color')
+            if id_color_value:
+                color_obj = _get_unique(colores, id_color_value)
+                if not color_obj:
+                    messages.error(request, 'No se pudo actualizar la personalización: color no es único o no existe.')
+                    return render(
+                        request,
+                        'panel_admin/personalizacion_form.html',
+                        {'form': form, 'titulo': 'Editar personalización', 'obj': obj, 'usuario': request.admin_usuario},
+                    )
+                obj.id_color = color_obj
+
+            id_marca_value = request.POST.get('id_marca')
+            if id_marca_value:
+                marca_obj = _get_unique(marcas, id_marca_value)
+                if not marca_obj:
+                    messages.error(request, 'No se pudo actualizar la personalización: marca no es única o no existe.')
+                    return render(
+                        request,
+                        'panel_admin/personalizacion_form.html',
+                        {'form': form, 'titulo': 'Editar personalización', 'obj': obj, 'usuario': request.admin_usuario},
+                    )
+                obj.id_marca = marca_obj
+
+            id_genero_value = request.POST.get('id_genero')
+            if id_genero_value:
+                genero_obj = _get_unique(genero, id_genero_value)
+                if not genero_obj:
+                    messages.error(request, 'No se pudo actualizar la personalización: género no es único o no existe.')
+                    return render(
+                        request,
+                        'panel_admin/personalizacion_form.html',
+                        {'form': form, 'titulo': 'Editar personalización', 'obj': obj, 'usuario': request.admin_usuario},
+                    )
+                obj.id_genero = genero_obj
+
+            if request.FILES.get('imagen_personalizacion'):
+                obj.imagen_personalizacion = request.FILES['imagen_personalizacion']
+            obj.save()
             messages.success(request, 'Personalización actualizada.')
             return redirect('panel_personalizacion')
     else:
@@ -801,7 +893,9 @@ def personalizacion_editar(request, pk):
 
 @solo_administrador
 def personalizacion_eliminar(request, pk):
-    obj = get_object_or_404(Personalizacion, pk=pk)
+    obj = Personalizacion.objects.filter(pk=pk).distinct().first()
+    if not obj:
+        raise Http404('Personalización no encontrada')
     if request.method == 'POST':
         if obj.imagen_personalizacion:
             obj.imagen_personalizacion.delete(save=False)
@@ -853,6 +947,63 @@ def valoracion_eliminar(request, pk):
             'titulo': 'Eliminar Valoración',
             'objeto': f"Opinión de {opinion.id_usuario.primer_nombre} sobre {opinion.id_producto.nombre}",
             'volver': 'panel_valoraciones',
+            'usuario': request.admin_usuario,
+        },
+    )
+
+
+@solo_administrador
+def emails_enviados(request):
+    """Vista para ver los emails enviados guardados en archivos."""
+    import os
+    from django.conf import settings
+    
+    emails = []
+    email_dir = getattr(settings, 'EMAIL_FILE_PATH', None)
+    
+    if email_dir and os.path.exists(email_dir):
+        # Obtener lista de archivos de email ordenados por fecha (más recientes primero)
+        email_files = [f for f in os.listdir(email_dir) if f.endswith('.log')]
+        email_files.sort(reverse=True)
+        
+        for filename in email_files:
+            filepath = os.path.join(email_dir, filename)
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    
+                # Extraer información del email
+                lines = content.split('\n')
+                subject = ''
+                to_email = ''
+                date_sent = ''
+                
+                for line in lines:
+                    if line.startswith('Subject:'):
+                        subject = line.replace('Subject:', '').strip()
+                    elif line.startswith('To:'):
+                        to_email = line.replace('To:', '').strip()
+                    elif line.startswith('Date:'):
+                        date_sent = line.replace('Date:', '').strip()
+                
+                emails.append({
+                    'filename': filename,
+                    'filepath': filepath,
+                    'subject': subject,
+                    'to_email': to_email,
+                    'date_sent': date_sent,
+                    'content': content,
+                })
+            except Exception as e:
+                # Si hay error leyendo el archivo, continuar
+                continue
+    
+    return render(
+        request,
+        'panel_admin/emails_enviados.html',
+        {
+            'titulo': 'Emails Enviados',
+            'emails': emails,
             'usuario': request.admin_usuario,
         },
     )

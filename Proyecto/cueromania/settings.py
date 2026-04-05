@@ -80,5 +80,16 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Configuración de Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'montielsebastian555@gmail.com'
+EMAIL_HOST_PASSWORD = 'czsm vlkg pyrw moqp'
+DEFAULT_FROM_EMAIL = 'montielsebastian555@gmail.com'
 
+# Para desarrollo local puedes volver a usar archivos de email si necesitas:
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 

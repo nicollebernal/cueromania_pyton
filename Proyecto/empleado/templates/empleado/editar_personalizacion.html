@@ -25,6 +25,16 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <label class="form-label">Cliente *</label>
+                                <select class="form-control" name="id_usuario" required>
+                                    {% for cliente in clientes %}
+                                        <option value="{{ cliente.id_usuario }}" {% if cliente.id_usuario == personalizacion.id_usuario_id %}selected{% endif %}>
+                                            {{ cliente.primer_nombre }} {{ cliente.primer_apellido }} - {{ cliente.gmail }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Categoría *</label>
                                 <select class="form-control" name="id_categoria" required>
                                     {% for cat in categorias %}
@@ -35,6 +45,8 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Marca *</label>
                                 <select class="form-control" name="id_marca" required>

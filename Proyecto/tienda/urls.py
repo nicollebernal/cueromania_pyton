@@ -7,8 +7,12 @@ urlpatterns = [
    
    path ('', views.login_view, name='login'),
    path ('logout/', views.logout_view, name='logout'),
+   path ('recuperar/', views.password_reset_request, name='password_reset'),
+   path ('recuperar/enviado/', views.password_reset_done, name='password_reset_done'),
+   path ('cambiar-contraseña/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+   path ('recuperacion-completada/', views.password_reset_complete, name='password_reset_complete'),
    path  ('administrador/', include('panel_admin.urls')),
-   path  ('empleado/', views.empleado_dashboard, name='empleado'),
+   path  ('empleado/', views.empleado_dashboard, name='empleado_tienda'),
    path ('personalizacion/', views.personalizacion, name='personalizacion'),
    path ('crear_personalizacion/', views.crear_personalizacion, name='crear_personalizacion'),
    path ('registrar_usuario/', views.registrar_usuario, name ='registrar_usuario'),
