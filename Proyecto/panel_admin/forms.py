@@ -305,6 +305,10 @@ class PersonalizacionForm(forms.ModelForm):
             attrs={'type': 'date', 'class': 'form-control'}
         )
         self.fields['descripcion'].widget = forms.Textarea(attrs={'rows': 4})
+        self.fields['id_categoria'].queryset = categoria.objects.order_by('nombre_categoria').distinct()
+        self.fields['id_color'].queryset = colores.objects.order_by('nombre_color').distinct()
+        self.fields['id_marca'].queryset = marcas.objects.order_by('nombre_marca').distinct()
+        self.fields['id_genero'].queryset = genero.objects.order_by('nombre_genero').distinct()
 
     class Meta:
         model = Personalizacion

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Q
-from django.http import HttpResponse
+from django.db.models import Q, F
+from django.http import HttpResponse, Http404
 from django.template.loader import render_to_string
 from django.utils import timezone
 from tienda.models import Usuario, Producto, Venta, DetalleVenta
@@ -67,6 +67,7 @@ def login_view(request):
     return render(request, 'login/login.html')
 
 
+@requiere_rol_empleado
 def empleado_dashboard(request):
     """
     Dashboard del empleado con lista de productos e inventario.
@@ -97,6 +98,7 @@ def empleado_dashboard(request):
         'query': query
     })
     
+@requiere_rol_empleado
 def inventario_empleado(request):
     """
     Vista del inventario del empleado con búsqueda.
@@ -108,7 +110,10 @@ def inventario_empleado(request):
     usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
 
     query = request.GET.get('q', '').strip()
-    productos = Producto.objects.all().order_by('id_producto')
+    productos = Producto.objects.all().order_by('id_producto').annotate(
+        marca_nombre=F('id_marca__nombre_marca'),
+        categoria_nombre=F('id_categoria__nombre_categoria')
+    ).distinct()
 
     if query:
         productos = productos.filter(
@@ -123,6 +128,7 @@ def inventario_empleado(request):
     })
 
 
+@requiere_rol_empleado
 def editar_producto_empleado(request, producto_id):
     """
     Permite al empleado editar los datos del producto, incluido el stock.
@@ -166,6 +172,7 @@ def editar_producto_empleado(request, producto_id):
     })
 
 
+@requiere_rol_empleado
 def sumar_stock(request, producto_id):
     """
     Suma stock rápidamente.
@@ -196,9 +203,10 @@ def sumar_stock(request, producto_id):
         except ValueError:
             messages.error(request, 'Cantidad inválida.')
 
-    return redirect('empleado')
+    return redirect('inventario_empleado')
 
 
+@requiere_rol_empleado
 def restar_stock(request, producto_id):
     """
     Resta stock rápidamente sin dejar negativos.
@@ -232,9 +240,10 @@ def restar_stock(request, producto_id):
         except ValueError:
             messages.error(request, 'Cantidad inválida.')
 
-    return redirect('empleado')
+    return redirect('inventario_empleado')
 
 
+@requiere_rol_empleado
 def eliminar_producto_empleado(request, producto_id):
     """
     Elimina un producto.
@@ -255,7 +264,7 @@ def eliminar_producto_empleado(request, producto_id):
     if request.method == 'POST':
         producto.delete()
         messages.success(request, 'Producto eliminado correctamente.')
-        return redirect('empleado')
+        return redirect('inventario_empleado')
 
     return render(request, 'empleado/eliminar_producto.html', {
         'producto': producto
@@ -317,6 +326,7 @@ def filtrar_producto(request):
         'query': query
     })
     
+@requiere_rol_empleado
 def ventas_empleado(request):
     """
     Módulo de ventas presenciales.
@@ -326,14 +336,26 @@ def ventas_empleado(request):
         return redirect('login')
 
     usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
+    query = request.GET.get('q', '').strip()
     productos = Producto.objects.all().order_by('nombre')
+
+    if query:
+        productos = productos.filter(
+            Q(nombre__icontains=query) |
+            Q(descripcion__icontains=query)
+        )
+
+    facturas = Venta.objects.filter(id_usuario_id=usuario_id).order_by('-fecha_ventas', '-id_ventas')
 
     return render(request, 'empleado/ventas.html', {
         'usuario': usuario,
-        'productos': productos
+        'productos': productos,
+        'query': query,
+        'facturas': facturas
     })
 
 
+@requiere_rol_empleado
 def pedidos_personalizados(request):
     """
     Módulo de pedidos de personalización.
@@ -343,12 +365,20 @@ def pedidos_personalizados(request):
         return redirect('login')
 
     usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
-    personalizaciones = Personalizacion.objects.all().order_by('-fecha_solicitud')
+    personalizaciones = Personalizacion.objects.all().order_by('-fecha_solicitud').annotate(
+        marca_nombre=F('id_marca__nombre_marca'),
+        categoria_nombre=F('id_categoria__nombre_categoria'),
+        color_nombre=F('id_color__nombre_color'),
+        genero_nombre=F('id_genero__nombre_genero'),
+        cliente_nombre=F('id_usuario__primer_nombre'),
+        cliente_apellido=F('id_usuario__primer_apellido')
+    ).distinct()
     
     marcas_list = marcas.objects.all()
     categorias_list = categoria.objects.all()
     generos_list = genero.objects.all()
     colores_list = colores.objects.all()
+    clientes_list = Usuario.objects.filter(id_rol__nombre_rol='cliente')
 
     return render(request, 'empleado/pedidos_personalizados.html', {
         'usuario': usuario,
@@ -356,7 +386,8 @@ def pedidos_personalizados(request):
         'marcas': marcas_list,
         'categorias': categorias_list,
         'generos': generos_list,
-        'colores': colores_list
+        'colores': colores_list,
+        'clientes': clientes_list
     })
 
 
@@ -425,6 +456,7 @@ def crear_producto(request):
 
 
 # ====== VENTAS CON CARRITO ======
+@requiere_rol_empleado
 def carrito_ventas(request):
     """
     Mostrar carrito de ventas temporal.
@@ -461,6 +493,7 @@ def carrito_ventas(request):
     })
 
 
+@requiere_rol_empleado
 def agregar_al_carrito_venta(request, producto_id):
     """
     Agregar producto al carrito de ventas (retorna JSON para AJAX).
@@ -502,6 +535,7 @@ def agregar_al_carrito_venta(request, producto_id):
     return HttpResponse(json.dumps({'success': False, 'error': 'Método no permitido'}), content_type='application/json')
 
 
+@requiere_rol_empleado
 def quitar_del_carrito_venta(request, producto_id):
     """
     Quitar producto del carrito de ventas (retorna JSON para AJAX).
@@ -525,6 +559,7 @@ def quitar_del_carrito_venta(request, producto_id):
         return HttpResponse(json.dumps({'success': False, 'error': str(e)}), content_type='application/json')
 
 
+@requiere_rol_empleado
 def procesar_venta(request):
     """
     Procesar la venta y crear registro en base de datos.
@@ -601,6 +636,7 @@ def procesar_venta(request):
     return redirect('carrito_ventas')
 
 
+@requiere_rol_empleado
 def factura_venta(request, venta_id):
     """
     Mostrar y descargar factura en PDF.
@@ -614,6 +650,7 @@ def factura_venta(request, venta_id):
     })
 
 
+@requiere_rol_empleado
 def descargar_factura_pdf(request, venta_id):
     """
     Descargar factura como PDF.
@@ -646,6 +683,7 @@ def guardar_personalizacion(request):
         usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
         
         descripcion = request.POST.get('descripcion')
+        id_usuario = request.POST.get('id_usuario')
         id_categoria = request.POST.get('id_categoria')
         id_color = request.POST.get('id_color')
         id_genero = request.POST.get('id_genero')
@@ -655,7 +693,7 @@ def guardar_personalizacion(request):
             personalizacion = Personalizacion(
                 descripcion=descripcion,
                 fecha_solicitud=date.today(),
-                id_usuario=usuario,
+                id_usuario_id=id_usuario,
                 id_categoria_id=id_categoria,
                 id_color_id=id_color,
                 id_genero_id=id_genero,
@@ -674,6 +712,7 @@ def guardar_personalizacion(request):
     return redirect('pedidos_personalizados')
 
 
+@requiere_rol_empleado
 def editar_personalizacion(request, personalizacion_id):
     """
     Editar una personalización existente.
@@ -689,10 +728,14 @@ def editar_personalizacion(request, personalizacion_id):
         messages.error(request, 'No tienes permisos para acceder a esta sección.')
         return redirect('login')
     
-    personalizacion = get_object_or_404(Personalizacion, id_personalizacion=personalizacion_id)
+    personalizacion_qs = Personalizacion.objects.filter(id_personalizacion=personalizacion_id)
+    personalizacion = personalizacion_qs.first()
+    if not personalizacion:
+        raise Http404('Personalización no encontrada')
 
     if request.method == 'POST':
         personalizacion.descripcion = request.POST.get('descripcion', personalizacion.descripcion)
+        personalizacion.id_usuario_id = request.POST.get('id_usuario', personalizacion.id_usuario_id)
         personalizacion.id_categoria_id = request.POST.get('id_categoria', personalizacion.id_categoria_id)
         personalizacion.id_color_id = request.POST.get('id_color', personalizacion.id_color_id)
         personalizacion.id_genero_id = request.POST.get('id_genero', personalizacion.id_genero_id)
@@ -701,10 +744,14 @@ def editar_personalizacion(request, personalizacion_id):
         if request.FILES.get('imagen_personalizacion'):
             personalizacion.imagen_personalizacion = request.FILES['imagen_personalizacion']
 
-        personalizacion.save()
-        messages.success(request, 'Personalización actualizada correctamente.')
-        return redirect('pedidos_personalizados')
+        try:
+            personalizacion.save()
+            messages.success(request, 'Personalización actualizada correctamente.')
+            return redirect('pedidos_personalizados')
+        except Exception as e:
+            messages.error(request, f'Error al actualizar: {str(e)}')
 
+    clientes_list = Usuario.objects.filter(id_rol__nombre_rol='cliente')
     marcas_list = marcas.objects.all()
     categorias_list = categoria.objects.all()
     generos_list = genero.objects.all()
@@ -712,6 +759,7 @@ def editar_personalizacion(request, personalizacion_id):
 
     return render(request, 'empleado/editar_personalizacion.html', {
         'personalizacion': personalizacion,
+        'clientes': clientes_list,
         'marcas': marcas_list,
         'categorias': categorias_list,
         'generos': generos_list,
@@ -719,6 +767,7 @@ def editar_personalizacion(request, personalizacion_id):
     })
 
 
+@requiere_rol_empleado
 def eliminar_personalizacion(request, personalizacion_id):
     """
     Eliminar una personalización.
@@ -734,7 +783,19 @@ def eliminar_personalizacion(request, personalizacion_id):
         messages.error(request, 'No tienes permisos para acceder a esta sección.')
         return redirect('login')
     
-    personalizacion = get_object_or_404(Personalizacion, id_personalizacion=personalizacion_id)
-    personalizacion.delete()
-    messages.success(request, 'Personalización eliminada correctamente.')
-    return redirect('pedidos_personalizados')
+    personalizacion_qs = Personalizacion.objects.filter(id_personalizacion=personalizacion_id)
+    personalizacion = personalizacion_qs.first()
+    if not personalizacion:
+        raise Http404('Personalización no encontrada')
+
+    if request.method == 'POST':
+        try:
+            personalizacion.delete()
+            messages.success(request, 'Personalización eliminada correctamente.')
+            return redirect('pedidos_personalizados')
+        except Exception as e:
+            messages.error(request, f'Error al eliminar: {str(e)}')
+
+    return render(request, 'empleado/eliminar_personalizacion.html', {
+        'personalizacion': personalizacion
+    })

@@ -2,7 +2,7 @@ from datetime import date
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.hashers import make_password
-from django.db.models import Avg
+from django.db.models import Avg, OuterRef, Subquery
 from .models import (
     Usuario, Producto, Rol, Personalizacion, 
     Valoracion, Venta, DetalleVenta, 
@@ -126,9 +126,23 @@ def personalizacion(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id: return redirect('login')
     usuario = Usuario.objects.get(id_usuario=usuario_id)
+    personalizaciones = Personalizacion.objects.filter(id_usuario=usuario).annotate(
+        categoria_nombre=Subquery(
+            categoria.objects.filter(pk=OuterRef('id_categoria')).values('nombre_categoria')[:1]
+        ),
+        color_nombre=Subquery(
+            colores.objects.filter(pk=OuterRef('id_color')).values('nombre_color')[:1]
+        ),
+        marca_nombre=Subquery(
+            marcas.objects.filter(pk=OuterRef('id_marca')).values('nombre_marca')[:1]
+        ),
+        genero_nombre=Subquery(
+            genero.objects.filter(pk=OuterRef('id_genero')).values('nombre_genero')[:1]
+        ),
+    )
     return render(request, 'cliente/personalizacion.html', {
         'usuario': usuario,
-        'personalizaciones': Personalizacion.objects.filter(id_usuario=usuario),
+        'personalizaciones': personalizaciones,
         'categorias': categoria.objects.all(),
         'colores': colores.objects.all(),
         'marcas': marcas.objects.all(),
@@ -137,17 +151,41 @@ def personalizacion(request):
 
 def crear_personalizacion(request):
     usuario_id = request.session.get('usuario_id')
-    if not usuario_id: return redirect('login')
+    if not usuario_id:
+        return redirect('login')
+
     if request.method == 'POST':
-        Personalizacion.objects.create(
-            id_usuario=Usuario.objects.get(id_usuario=usuario_id),
-            descripcion=request.POST.get('descripcion', ''),
-            id_categoria=categoria.objects.get(pk=request.POST.get('id_categoria')),
-            id_color=colores.objects.get(pk=request.POST.get('id_color')),
-            id_marca=marcas.objects.get(pk=request.POST.get('id_marca')),
-            id_genero=genero.objects.get(pk=request.POST.get('id_genero')),
-            imagen_personalizacion=request.FILES.get('imagen_personalizacion')
-        )
+        descripcion = request.POST.get('descripcion', '').strip()
+        fecha_solicitud_raw = request.POST.get('fecha_solicitud', '').strip()
+        id_categoria = request.POST.get('id_categoria')
+        id_color = request.POST.get('id_color')
+        id_marca = request.POST.get('id_marca')
+        id_genero = request.POST.get('id_genero')
+
+        if not descripcion or not id_categoria or not id_color or not id_marca or not id_genero:
+            messages.error(request, 'Completa todos los campos obligatorios para enviar la propuesta.')
+            return redirect('personalizacion')
+
+        try:
+            if fecha_solicitud_raw:
+                fecha_solicitud = date.fromisoformat(fecha_solicitud_raw)
+            else:
+                fecha_solicitud = date.today()
+
+            Personalizacion.objects.create(
+                id_usuario_id=usuario_id,
+                descripcion=descripcion,
+                fecha_solicitud=fecha_solicitud,
+                id_categoria_id=id_categoria,
+                id_color_id=id_color,
+                id_marca_id=id_marca,
+                id_genero_id=id_genero,
+                imagen_personalizacion=request.FILES.get('imagen_personalizacion')
+            )
+            messages.success(request, 'Propuesta de diseño enviada correctamente.')
+        except Exception as e:
+            messages.error(request, f'Error al enviar propuesta de diseño: {str(e)}')
+
     return redirect('personalizacion')
 
 def valoraciones(request):
