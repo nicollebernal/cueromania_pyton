@@ -70,7 +70,7 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4 shadow registro-box">
         <h3 class="text-center mb-4">Registro de Usuario</h3>
-        <form method="post">
+        <form method="post" action="{% url 'registrar_usuario' %}">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -106,6 +106,7 @@
                 <input type="password" name="clave" class="form-control" placeholder="Contraseña" required>
             </div>
             <button type="submit" class="btn btn-registro w-100">Registrarse</button>
+
         </form>
     </div>
 </div>
