@@ -5,10 +5,8 @@
     --gris-fondo: #f8fafc;
     --texto-oscuro: #0f172a;
     --blanco-puro: #ffffff;
-    --borde-suave: rgba(0,0,0,0.05);
+    --borde-suave: rgba(0, 0, 0, 0.05);
 }
-
-
 
 .admin-jsf.admin-dashboard-body {
     margin: 0;
@@ -28,7 +26,7 @@
     flex-direction: column;
     min-height: 100vh;
     border-right: 1px solid var(--borde-suave);
-    box-shadow: 10px 0 30px rgba(0,0,0,0.02);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
 }
 
 .admin-sidebar-nav {
@@ -150,7 +148,7 @@
     background-color: var(--blanco-puro);
     border: none;
     border-radius: 24px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     color: var(--texto-oscuro);
     text-decoration: none;
@@ -197,7 +195,6 @@
     border-top: 1px solid var(--borde-suave);
 }
 
-
 .admin-jsf.admin-interior-body {
     background-color: var(--gris-fondo);
     color: var(--texto-oscuro);
@@ -208,7 +205,7 @@
     background-color: var(--blanco-puro);
     border-radius: 20px;
     padding: 35px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
     border: none;
 }
 
@@ -238,7 +235,6 @@ h2.interior-title {
     box-shadow: 0 4px 15px rgba(139, 28, 36, 0.2);
 }
 
-
 .table-admin thead th {
     background-color: #f8fafc;
     color: #64748b;
@@ -260,8 +256,9 @@ h2.interior-title {
     background-color: #fcfcfc;
 }
 
-
-.badge-pagado, .badge-activo, .badge-entregado {
+.badge-pagado,
+.badge-activo,
+.badge-entregado {
     background-color: rgba(16, 185, 129, 0.1);
     color: #059669;
     padding: 6px 14px;
@@ -278,7 +275,6 @@ h2.interior-title {
     font-weight: 600;
 }
 
-
 .panel-tema-cueromania input.form-control,
 .panel-tema-cueromania select.form-select {
     background: #ffffff !important;
@@ -294,7 +290,6 @@ h2.interior-title {
     box-shadow: 0 0 0 4px rgba(139, 28, 36, 0.1) !important;
 }
 
-
 .panel-tema-cueromania.interior-shell {
     background: var(--gris-fondo);
     padding: 40px 20px;
@@ -306,7 +301,7 @@ h2.interior-title {
     background: var(--blanco-puro) !important;
     color: var(--texto-oscuro);
     border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
     border-radius: 20px;
 }
 
@@ -329,7 +324,7 @@ h2.interior-title {
     border-radius: 20px;
     padding: 24px;
     border: 1px solid var(--borde-suave);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
 .panel-resumen-caja .valor {
@@ -344,4 +339,19 @@ h2.interior-title {
     text-transform: uppercase;
     font-size: 0.7rem;
     letter-spacing: 1px;
+}
+
+.img-personalizacion {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.img-personalizacion:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }

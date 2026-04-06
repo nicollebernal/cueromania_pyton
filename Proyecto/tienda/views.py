@@ -441,7 +441,7 @@ def password_reset_confirm(request, uidb64, token):
                 'usuario': usuario
             })
         
-        # Validar contraseña nueva
+       
         if not clave_nueva:
             messages.error(request, 'La contraseña no puede estar vacía.')
             return render(request, 'login/password_reset_confirm.html', {
@@ -466,7 +466,7 @@ def password_reset_confirm(request, uidb64, token):
                 'usuario': usuario
             })
         
-        # Actualizar contraseña
+        
         usuario.clave = make_password(clave_nueva)
         usuario.save()
         
