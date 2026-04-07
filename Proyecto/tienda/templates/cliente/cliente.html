@@ -25,6 +25,7 @@
                         <input type="text" name="q" placeholder="Buscar productos..." value="{{ query|default:'' }}" required>
                     </div>
                     <button type="submit" class="btn btn-comprar ms-2">Buscar</button>
+                    <a href="{% url 'cliente' %}" class="btn btn-secondary ms-2">Limpiar</a>
                 </form>
             </div>
 
