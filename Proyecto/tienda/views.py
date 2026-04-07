@@ -162,6 +162,8 @@ def personalizacion(request):
         'marcas': marcas.objects.all(),
         'generos': genero.objects.all(),
     })
+    
+    
 
 def crear_personalizacion(request):
     usuario_id = request.session.get('usuario_id')
@@ -259,7 +261,6 @@ def contacto(request):
     return render(request, 'tienda/contacto.html')
 
 
-# --- RECUPERACIÓN DE CONTRASEÑA ---
 
 def password_reset_request(request):
     """Solicita recuperación de contraseña por email."""
@@ -269,22 +270,22 @@ def password_reset_request(request):
         try:
             usuario = Usuario.objects.get(gmail__iexact=email)
         except Usuario.DoesNotExist:
-            # No revelar si el email existe
+           
             messages.success(request, 'Si el email existe en nuestros registros, recibirás un enlace para recuperar tu contraseña.')
             return redirect('password_reset_done')
         
-        # Generar token y UID
+       
         uid = urlsafe_base64_encode(force_bytes(usuario.pk))
-        # Token verificable sin sesión: usa contraseña y timestamp
+       
         timestamp_24h = int(datetime.now().timestamp() / 86400) * 86400
         token = hashlib.sha256(f'{usuario.id_usuario}|{usuario.clave}|{timestamp_24h}'.encode()).hexdigest()
         
-        # Construir enlace de reset
+       
         protocol = 'https' if request.is_secure() else 'http'
         domain = request.get_host()
         reset_url = f'{protocol}://{domain}/cambiar-contraseña/{uid}/{token}/'
         
-        # Contenido del email HTML con logo
+        
         subject = 'Recupera tu contraseña - Cueromanía'
         logo_url = f'{protocol}://{domain}/static/img/logo.jpeg'
         
@@ -381,7 +382,7 @@ Equipo de Cueromanía
             messages.success(request, 'Si el email existe en nuestros registros, recibirás un enlace para recuperar tu contraseña.')
             return redirect('password_reset_done')
         except Exception as e:
-            # Log seguro sin exponer PII o detalles internos
+            
             logger = logging.getLogger(__name__)
             logger.error('Password reset email sending failed')
             print(f"[DEBUG] Error enviando email: {str(e)}")
@@ -405,14 +406,14 @@ def password_reset_confirm(request, uidb64, token):
     except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
         usuario = None
     
-    # Verificar token sin sesión: regenerar token esperado y comparar
+    
     is_valid_token = False
     if usuario is not None:
-        # Token debe ser un hash de: id|contraseña|timestamp_24h
+       
         timestamp_24h = int(datetime.now().timestamp() / 86400) * 86400
         expected_token = hashlib.sha256(f'{usuario.id_usuario}|{usuario.clave}|{timestamp_24h}'.encode()).hexdigest()
         
-        # También aceptar token del día anterior (tokens válidos por 24h desde su creación)
+        
         timestamp_24h_prev = timestamp_24h - 86400
         expected_token_prev = hashlib.sha256(f'{usuario.id_usuario}|{usuario.clave}|{timestamp_24h_prev}'.encode()).hexdigest()
         

@@ -59,11 +59,11 @@ class Usuario (models.Model):
         if es_hash_django(stored):
             return check_password(raw_password, stored)
 
-        # Texto plano (misma cadena que en BD)
+       
         if raw_password == stored:
             return True
 
-        # MD5 en hexadecimal (32 caracteres)
+       
         if len(stored) == 32:
             try:
                 digest = hashlib.md5(raw_password.encode('utf-8')).hexdigest()
@@ -75,7 +75,7 @@ class Usuario (models.Model):
         return False
 
     def migrar_clave_a_hash_django(self, raw_password):
-        """Tras login correcto con formato legacy, guarda pbkdf2 para los próximos accesos."""
+        
         if not raw_password or es_hash_django(self.clave):
             return
         self.clave = make_password(raw_password)
