@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Q, F
+from django.db.models import Q, F, Max
 from django.http import HttpResponse, Http404
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -383,7 +383,11 @@ def crear_producto(request):
         id_tipo_cierre = request.POST.get('id_tipo_cierre')
 
         try:
+            next_id = Producto.objects.aggregate(max_id=Max('id_producto'))['max_id'] or 0
+            next_id = max(next_id, 0) + 1
+
             producto = Producto(
+                id_producto=next_id,
                 nombre=nombre,
                 precio=precio,
                 talla=talla,

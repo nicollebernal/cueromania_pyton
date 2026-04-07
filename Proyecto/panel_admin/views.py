@@ -4,7 +4,7 @@ from io import BytesIO
 
 from django.contrib import messages
 from django.core.exceptions import MultipleObjectsReturned
-from django.db.models import Avg, Prefetch
+from django.db.models import Avg, Prefetch, Max
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from tienda.models import (
@@ -138,7 +138,11 @@ def producto_nuevo(request):
     if request.method == 'POST':
         form = ProductoForm(request.POST)
         if form.is_valid():
-            form.save()
+            next_id = Producto.objects.aggregate(max_id=Max('id_producto'))['max_id'] or 0
+            next_id = max(next_id, 0) + 1
+            producto = form.save(commit=False)
+            producto.id_producto = next_id
+            producto.save()
             messages.success(request, 'Producto creado correctamente.')
             return redirect('panel_productos')
     else:
