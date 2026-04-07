@@ -660,7 +660,11 @@ def guardar_personalizacion(request):
         id_marca = request.POST.get('id_marca')
 
         try:
+            next_id = Personalizacion.objects.aggregate(max_id=Max('id_personalizacion'))['max_id'] or 0
+            next_id = max(next_id, 0) + 1
+
             personalizacion = Personalizacion(
+                id_personalizacion=next_id,
                 descripcion=descripcion,
                 fecha_solicitud=date.today(),
                 id_usuario_id=id_usuario,

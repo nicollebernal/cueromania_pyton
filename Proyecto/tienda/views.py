@@ -2,7 +2,7 @@ from datetime import date, timedelta, datetime
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.hashers import make_password
-from django.db.models import Avg, OuterRef, Subquery
+from django.db.models import Avg, OuterRef, Subquery, Max
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
@@ -186,7 +186,11 @@ def crear_personalizacion(request):
             else:
                 fecha_solicitud = date.today()
 
+            next_id = Personalizacion.objects.aggregate(max_id=Max('id_personalizacion'))['max_id'] or 0
+            next_id = max(next_id, 0) + 1
+
             Personalizacion.objects.create(
+                id_personalizacion=next_id,
                 id_usuario_id=usuario_id,
                 descripcion=descripcion,
                 fecha_solicitud=fecha_solicitud,
