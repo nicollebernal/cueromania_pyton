@@ -161,8 +161,8 @@ def personalizacion(request):
         'colores': colores.objects.all(),
         'marcas': marcas.objects.all(),
         'generos': genero.objects.all(),
+        'today': date.today().isoformat()
     })
-    
     
 
 def crear_personalizacion(request):
@@ -188,6 +188,10 @@ def crear_personalizacion(request):
             else:
                 fecha_solicitud = date.today()
 
+            if fecha_solicitud < date.today():
+                messages.error(request, 'No puedes seleccionar una fecha anterior a hoy.')
+                return redirect('personalizacion')
+
             next_id = Personalizacion.objects.aggregate(max_id=Max('id_personalizacion'))['max_id'] or 0
             next_id = max(next_id, 0) + 1
 
@@ -207,7 +211,7 @@ def crear_personalizacion(request):
             messages.error(request, f'Error al enviar propuesta de diseño: {str(e)}')
 
     return redirect('personalizacion')
-
+    
 def valoraciones(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id: return redirect('login')

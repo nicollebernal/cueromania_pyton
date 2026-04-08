@@ -31,7 +31,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-6">
                                 <label for="fecha_solicitud" class="form-label small fw-bold">Fecha</label>
-                                <input id="fecha_solicitud" name="fecha_solicitud" type="date" class="form-control luxury-input" value="{{ request.POST.fecha_solicitud }}">
+                                <input id="fecha_solicitud" name="fecha_solicitud" type="date" class="form-control luxury-input" value="{{ request.POST.fecha_solicitud }}" min="{{ today }}">
                             </div>
                             <div class="col-6">
                                 <label for="id_categoria" class="form-label small fw-bold">Producto</label>
