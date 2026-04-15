@@ -14,6 +14,8 @@ urlpatterns = [
    path  ('administrador/', include('panel_admin.urls')),
    path  ('empleado/', views.empleado_dashboard, name='empleado_tienda'),
    path ('personalizacion/', views.personalizacion, name='personalizacion'),
+   path('cancelar_personalizacion/<int:id>/', views.cancelar_personalizacion, name='cancelar_personalizacion'),
+   path('editar_personalizacion/<int:id>/', views.editar_personalizacion, name='editar_personalizacion'),
    path ('crear_personalizacion/', views.crear_personalizacion, name='crear_personalizacion'),
    path ('registrar_usuario/', views.registrar_usuario, name ='registrar_usuario'),
    path ('perfil/', views.cliente_perfil, name='perfil'),

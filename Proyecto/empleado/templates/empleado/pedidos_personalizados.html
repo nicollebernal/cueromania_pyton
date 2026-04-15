@@ -120,6 +120,7 @@
                     <th>Color</th>
                     <th>Género</th>
                     <th>Fecha Solicitud</th>
+                    <th>Estado</th> 
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -142,7 +143,20 @@
                     <td>{{ pedido.genero_nombre }}</td>
                     <td>{{ pedido.fecha_solicitud|date:"d/m/Y" }}</td>
                     <td>
-                        <a href="{% url 'editar_personalizacion' pedido.id_personalizacion %}" class="btn btn-warning btn-sm">
+                        <form method="POST" action="{% url 'cambiar_estado_personalizacion' pedido.id_personalizacion %}">
+                            {% csrf_token %}
+                            <select name="estado" class="form-control form-control-sm">
+                                <option value="pendiente" {% if pedido.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                                <option value="en_proceso" {% if pedido.estado == 'en_proceso' %}selected{% endif %}>En proceso</option>
+                                <option value="terminado" {% if pedido.estado == 'terminado' %}selected{% endif %}>Terminado</option>
+                                <option value="cancelado" {% if pedido.estado == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm mt-1">Actualizar</button>
+                        </form>
+                    </td>
+
+                    <td>
+                        <a href="{% url 'editar_personalizacion_empleado' pedido.id_personalizacion %}" class="btn btn-warning btn-sm">
                             ✎ Editar
                         </a>
                         <a href="{% url 'eliminar_personalizacion' pedido.id_personalizacion %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta personalización?')">

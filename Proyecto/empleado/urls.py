@@ -31,6 +31,7 @@ urlpatterns = [
     path('factura-pdf/<int:venta_id>/', views.descargar_factura_pdf, name='descargar_factura_pdf'),
     
     path('guardar-personalizacion/', views.guardar_personalizacion, name='guardar_personalizacion'),
-    path('editar-personalizacion/<int:personalizacion_id>/', views.editar_personalizacion, name='editar_personalizacion'),
+    path('editar-personalizacion/<int:personalizacion_id>/', views.editar_personalizacion, name='editar_personalizacion_empleado'),
     path('eliminar-personalizacion/<int:personalizacion_id>/', views.eliminar_personalizacion, name='eliminar_personalizacion'),
+    path('cambiar-estado/<int:personalizacion_id>/', views.cambiar_estado_personalizacion, name='cambiar_estado_personalizacion'),
 ]

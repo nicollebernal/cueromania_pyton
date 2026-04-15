@@ -165,6 +165,60 @@ def personalizacion(request):
     })
     
 
+def cancelar_personalizacion(request, id):
+    p = get_object_or_404(Personalizacion, id_personalizacion=id)
+
+    if p.estado == 'pendiente':
+        p.estado = 'cancelado_cliente'
+        p.save()
+        messages.success(request, 'Personalización cancelada correctamente.')
+    else:
+        messages.error(request, 'Solo puedes cancelar personalizaciones que estén pendientes.')
+
+    return redirect('personalizacion')
+
+def editar_personalizacion(request, id):
+    p = get_object_or_404(Personalizacion, id_personalizacion=id)
+
+    if p.estado != 'pendiente':
+        messages.error(request, 'Solo puedes editar personalizaciones que estén pendientes.')
+        return redirect('personalizacion')
+
+    if request.method == 'POST':
+        p.descripcion = request.POST.get('descripcion')
+
+        fecha = request.POST.get('fecha_solicitud')
+
+        if fecha:
+            fecha_convertida = date.fromisoformat(fecha)
+
+            if fecha_convertida < date.today():
+                messages.error(request, 'No puedes seleccionar una fecha anterior a hoy.')
+                return redirect('editar_personalizacion', id=id)
+
+            p.fecha_solicitud = fecha_convertida
+
+        if request.FILES.get('imagen_personalizacion'):
+            p.imagen_personalizacion = request.FILES.get('imagen_personalizacion')
+
+        p.id_categoria_id = request.POST.get('id_categoria')
+        p.id_color_id = request.POST.get('id_color')
+        p.id_marca_id = request.POST.get('id_marca')
+        p.id_genero_id = request.POST.get('id_genero')
+
+        p.save()
+        messages.success(request, 'Personalización actualizada correctamente.')
+        return redirect('personalizacion')
+
+    return render(request, 'cliente/editar_personalizacion.html', {
+        'p': p,
+        'categorias': categoria.objects.all(),
+        'colores': colores.objects.all(),
+        'marcas': marcas.objects.all(),
+        'generos': genero.objects.all(),
+        'today': date.today().isoformat(),
+    })
+
 def crear_personalizacion(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:

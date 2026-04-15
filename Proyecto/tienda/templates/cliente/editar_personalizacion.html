@@ -1,0 +1,95 @@
+{% extends "cliente/cliente.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 20px; max-width: 600px; margin: auto;">
+        <h3 class="fw-bold mb-4 text-center">Editar Personalización</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Descripción</label>
+                <textarea name="descripcion" class="form-control luxury-input" rows="4">{{ p.descripcion }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Imagen</label>
+                <input type="file" name="imagen_personalizacion" class="form-control luxury-input">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Fecha</label>
+                <input id="fecha_solicitud" name="fecha_solicitud" type="date" class="form-control luxury-input" value="{{ request.POST.fecha_solicitud }}" min="{{ today }}">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Categoría</label>
+                <select name="id_categoria" class="form-select luxury-input">
+                    {% for cat in categorias %}
+                        <option value="{{ cat.pk }}" {% if cat.pk == p.id_categoria.pk %}selected{% endif %}>
+                            {{ cat.nombre_categoria }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Color</label>
+                <select name="id_color" class="form-select luxury-input">
+                    {% for c in colores %}
+                        <option value="{{ c.pk }}" {% if c.pk == p.id_color.pk %}selected{% endif %}>
+                            {{ c.nombre_color }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Marca</label>
+                <select name="id_marca" class="form-select luxury-input">
+                    {% for m in marcas %}
+                        <option value="{{ m.pk }}" {% if m.pk == p.id_marca.pk %}selected{% endif %}>
+                            {{ m.nombre_marca }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Género</label>
+                <select name="id_genero" class="form-select luxury-input">
+                    {% for g in generos %}
+                        <option value="{{ g.pk }}" {% if g.pk == p.id_genero.pk %}selected{% endif %}>
+                            {{ g.nombre_genero }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-compra-lujo w-100 py-2">
+                Guardar cambios
+            </button>
+
+            <a href="{% url 'personalizacion' %}" class="btn btn-secondary w-100 mt-2">
+                Cancelar
+            </a>
+        </form>
+    </div>
+</div>
+
+<style>
+.luxury-input {
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    background-color: #fcfcfc;
+}
+.luxury-input:focus {
+    border-color: #1a1a1a;
+    box-shadow: none;
+    background-color: #ffffff;
+}
+</style>
+{% endblock %}

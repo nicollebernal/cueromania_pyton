@@ -17,25 +17,23 @@
                         {% csrf_token %}
                         
                         <div class="mb-4">
-                            <label for="descripcion" class="form-label small fw-bold">Idea o Detalles del Diseño</label>
-                            <textarea id="descripcion" name="descripcion" class="form-control luxury-input" rows="4" placeholder="Describe cómo imaginas tu producto..." required>{{ request.POST.descripcion }}</textarea>
+                            <label class="form-label small fw-bold">Idea o Detalles del Diseño</label>
+                            <textarea name="descripcion" class="form-control luxury-input" rows="4" required>{{ request.POST.descripcion }}</textarea>
                         </div>
 
                         <div class="mb-4">
-                            <label for="imagen_personalizacion" class="form-label small fw-bold">Referencia Visual (Opcional)</label>
-                            <div class="input-group">
-                                <input id="imagen_personalizacion" name="imagen_personalizacion" type="file" class="form-control luxury-input">
-                            </div>
+                            <label class="form-label small fw-bold">Referencia Visual</label>
+                            <input name="imagen_personalizacion" type="file" class="form-control luxury-input">
                         </div>
 
                         <div class="row g-3 mb-4">
                             <div class="col-6">
-                                <label for="fecha_solicitud" class="form-label small fw-bold">Fecha</label>
-                                <input id="fecha_solicitud" name="fecha_solicitud" type="date" class="form-control luxury-input" value="{{ request.POST.fecha_solicitud }}" min="{{ today }}">
+                                <label class="form-label small fw-bold">Fecha</label>
+                                <input name="fecha_solicitud" type="date" class="form-control luxury-input" value="{{ request.POST.fecha_solicitud }}" min="{{ today }}">
                             </div>
                             <div class="col-6">
-                                <label for="id_categoria" class="form-label small fw-bold">Producto</label>
-                                <select id="id_categoria" name="id_categoria" class="form-select luxury-input" required>
+                                <label class="form-label small fw-bold">Producto</label>
+                                <select name="id_categoria" class="form-select luxury-input" required>
                                     <option value="">Categoría</option>
                                     {% for cat in categorias %}
                                         <option value="{{ cat.pk }}">{{ cat.nombre_categoria }}</option>
@@ -46,8 +44,8 @@
 
                         <div class="row g-3 mb-4">
                             <div class="col-6">
-                                <label for="id_color" class="form-label small fw-bold">Tono del Cuero</label>
-                                <select id="id_color" name="id_color" class="form-select luxury-input" required>
+                                <label class="form-label small fw-bold">Color</label>
+                                <select name="id_color" class="form-select luxury-input" required>
                                     <option value="">Color</option>
                                     {% for color in colores %}
                                         <option value="{{ color.pk }}">{{ color.nombre_color }}</option>
@@ -55,8 +53,8 @@
                                 </select>
                             </div>
                             <div class="col-6">
-                                <label for="id_marca" class="form-label small fw-bold">Línea</label>
-                                <select id="id_marca" name="id_marca" class="form-select luxury-input" required>
+                                <label class="form-label small fw-bold">Marca</label>
+                                <select name="id_marca" class="form-select luxury-input" required>
                                     <option value="">Marca</option>
                                     {% for marca in marcas %}
                                         <option value="{{ marca.pk }}">{{ marca.nombre_marca }}</option>
@@ -66,8 +64,8 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="id_genero" class="form-label small fw-bold">Estilo de Género</label>
-                            <select id="id_genero" name="id_genero" class="form-select luxury-input" required>
+                            <label class="form-label small fw-bold">Género</label>
+                            <select name="id_genero" class="form-select luxury-input" required>
                                 <option value="">Selecciona</option>
                                 {% for g in generos %}
                                     <option value="{{ g.pk }}">{{ g.nombre_genero }}</option>
@@ -75,8 +73,8 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-compra-lujo w-100 py-3 shadow-sm">
-                            Enviar Propuesta de Diseño
+                        <button type="submit" class="btn btn-soft btn-soft-dark w-100 py-3 shadow-sm">
+                            Enviar Propuesta
                         </button>
                     </form>
                 </div>
@@ -93,26 +91,65 @@
                                 <div class="row g-0">
                                     {% if p.imagen_personalizacion %}
                                     <div class="col-md-4">
-                                        <img src="{{ p.imagen_personalizacion.url }}" alt="Referencia" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 200px;">
+                                        <img src="{{ p.imagen_personalizacion.url }}" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 200px;">
                                     </div>
                                     {% endif %}
                                     <div class="{% if p.imagen_personalizacion %}col-md-8{% else %}col-12{% endif %}">
                                         <div class="card-body p-4">
                                             <div class="d-flex justify-content-between align-items-start mb-3">
                                                 <div>
-                                                    <span class="badge bg-dark mb-2" style="border-radius: 5px;">ID: #{{ p.pk }}</span>
-                                                    <h5 class="fw-bold mb-0 text-uppercase">{{ p.categoria_nombre }}</h5>
+                                                    <span class="badge bg-dark mb-2">ID: #{{ p.pk }}</span>
+                                                    <h5 class="fw-bold text-uppercase">{{ p.categoria_nombre }}</h5>
                                                 </div>
-                                                <span class="text-muted small fw-bold"><i class="bi bi-calendar3 me-1"></i> {{ p.fecha_solicitud|date:"d/m/Y" }}</span>
+                                                <span class="text-muted small">{{ p.fecha_solicitud|date:"d/m/Y" }}</span>
                                             </div>
-                                            
+
                                             <div class="row g-2 mb-3">
                                                 <div class="col-auto"><span class="badge bg-light text-dark border">{{ p.color_nombre }}</span></div>
                                                 <div class="col-auto"><span class="badge bg-light text-dark border">{{ p.marca_nombre }}</span></div>
                                                 <div class="col-auto"><span class="badge bg-light text-dark border">{{ p.genero_nombre }}</span></div>
                                             </div>
 
-                                            <p class="text-muted small mb-0 fst-italic">"{{ p.descripcion }}"</p>
+                                            <p class="text-muted small fst-italic">"{{ p.descripcion }}"</p>
+
+                                            <div class="mt-3 d-flex justify-content-between align-items-center">
+                                                <span class="badge px-3 py-2"
+                                                {% if p.estado == 'pendiente' %}style="background:#facc15; color:#1a1a1a;"
+                                                {% elif p.estado == 'en_proceso' %}style="background:#38bdf8; color:#1a1a1a;"
+                                                {% elif p.estado == 'terminado' %}style="background:#22c55e; color:white;"
+                                                {% elif p.estado == 'cancelado' %}style="background:#ef4444; color:white;"
+                                                {% elif p.estado == 'cancelado_cliente' %}style="background:#6b7280; color:white;"
+                                                {% endif %}>
+                                                    {% if p.estado == 'pendiente' %}Pendiente
+                                                    {% elif p.estado == 'en_proceso' %}En proceso
+                                                    {% elif p.estado == 'terminado' %}Aprobado
+                                                    {% elif p.estado == 'cancelado' %}Rechazado
+                                                    {% elif p.estado == 'cancelado_cliente' %}Cancelado
+                                                    {% endif %}
+                                                </span>
+
+                                                <div class="d-flex gap-2">
+                                                    {% if p.estado == 'pendiente' %}
+                                                        <a href="{% url 'editar_personalizacion' p.pk %}" class="btn btn-soft btn-soft-dark">Editar</a>
+                                                        <a href="{% url 'cancelar_personalizacion' p.pk %}" class="btn btn-soft btn-soft-light">Cancelar</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            {% if p.estado == 'terminado' %}
+                                                <div class="alert alert-success mt-3 mb-0">
+                                                    Tu personalización fue aprobada y está lista
+                                                </div>
+                                            {% elif p.estado == 'cancelado' %}
+                                                <div class="alert alert-danger mt-3 mb-0">
+                                                    Tu solicitud fue rechazada
+                                                </div>
+                                            {% elif p.estado == 'en_proceso' %}
+                                                <div class="alert alert-info mt-3 mb-0">
+                                                    Estamos trabajando en tu diseño
+                                                </div>
+                                            {% endif %}
+
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +159,6 @@
                 </div>
             {% else %}
                 <div class="text-center py-5 bg-white shadow-sm" style="border-radius: 20px;">
-                    <i class="bi bi-palette fs-1 text-light mb-3 d-block"></i>
                     <p class="text-muted">Aún no has solicitado personalizaciones.</p>
                 </div>
             {% endif %}
@@ -131,27 +167,35 @@
 </div>
 
 <style>
-    .luxury-input {
-        border: 1px solid #e5e7eb;
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-        border-radius: 10px;
-        background-color: #fcfcfc;
-    }
-
-    .luxury-input:focus {
-        border-color: #1a1a1a;
-        box-shadow: none;
-        background-color: #ffffff;
-    }
-
-    .ls-2 {
-        letter-spacing: 0.15rem;
-    }
-
-    textarea.luxury-input {
-        resize: none;
-    }
+.luxury-input {
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+}
+.luxury-input:focus {
+    border-color: #000;
+}
+.btn-soft {
+    border-radius: 10px;
+    font-size: 0.8rem;
+    padding: 6px 14px;
+    transition: all 0.2s ease;
+}
+.btn-soft-dark {
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+}
+.btn-soft-dark:hover {
+    background-color: #333;
+}
+.btn-soft-light {
+    border: 1px solid #e5e7eb;
+    background-color: white;
+    color: #1a1a1a;
+}
+.btn-soft-light:hover {
+    background-color: #f3f4f6;
+}
 </style>
 {% endblock %}

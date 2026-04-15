@@ -251,10 +251,19 @@ class Valoracion(models.Model):
 class Personalizacion(models.Model):
     id_personalizacion = models.AutoField(primary_key=True)
     descripcion = models.TextField(blank=True)
+    ESTADOS = [
+        ('pendiente', 'Pendiente'),
+        ('en_proceso', 'En proceso'),
+        ('aceptado', 'Aceptado'),
+        ('rechazado', 'Rechazado'),
+        ('cancelado_cliente', 'Cancelado por el cliente'),
+        ('terminado', 'Terminado'),
+    ]
     imagen_personalizacion = models.ImageField(
         upload_to='personalizaciones/', blank=True, null=True
     )
     fecha_solicitud = models.DateField()
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
     id_usuario = models.ForeignKey(
         Usuario, on_delete=models.CASCADE, db_column='id_usuario', related_name='personalizaciones'
     )

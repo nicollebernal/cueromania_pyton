@@ -12,7 +12,7 @@ from functools import wraps
 import json
 
 
-# Decorador para validar rol de empleado o administrador
+
 def requiere_rol_empleado(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -688,20 +688,12 @@ def guardar_personalizacion(request):
 
 @requiere_rol_empleado
 def editar_personalizacion(request, personalizacion_id):
-    """
-    Editar una personalización existente.
-    """
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
         return redirect('login')
     
     usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
-    rol_nombre = usuario.id_rol.nombre_rol if usuario.id_rol else None
-    
-    if rol_nombre not in ['empleado', 'administrador']:
-        messages.error(request, 'No tienes permisos para acceder a esta sección.')
-        return redirect('login')
-    
+
     personalizacion_qs = Personalizacion.objects.filter(id_personalizacion=personalizacion_id)
     personalizacion = personalizacion_qs.first()
     if not personalizacion:
@@ -709,6 +701,19 @@ def editar_personalizacion(request, personalizacion_id):
 
     if request.method == 'POST':
         personalizacion.descripcion = request.POST.get('descripcion', personalizacion.descripcion)
+
+        fecha_raw = request.POST.get('fecha_solicitud', '').strip()
+        if fecha_raw:
+            try:
+                fecha = date.fromisoformat(fecha_raw)
+                if fecha < date.today():
+                    messages.error(request, 'No puedes seleccionar una fecha anterior a hoy.')
+                    return redirect('editar_personalizacion_empleado', personalizacion_id=personalizacion.id_personalizacion)
+                personalizacion.fecha_solicitud = fecha
+            except ValueError:
+                messages.error(request, 'Formato de fecha inválido.')
+                return redirect('editar_personalizacion_empleado', personalizacion_id=personalizacion.id_personalizacion)
+
         personalizacion.id_usuario_id = request.POST.get('id_usuario', personalizacion.id_usuario_id)
         personalizacion.id_categoria_id = request.POST.get('id_categoria', personalizacion.id_categoria_id)
         personalizacion.id_color_id = request.POST.get('id_color', personalizacion.id_color_id)
@@ -718,12 +723,9 @@ def editar_personalizacion(request, personalizacion_id):
         if request.FILES.get('imagen_personalizacion'):
             personalizacion.imagen_personalizacion = request.FILES['imagen_personalizacion']
 
-        try:
-            personalizacion.save()
-            messages.success(request, 'Personalización actualizada correctamente.')
-            return redirect('pedidos_personalizados')
-        except Exception as e:
-            messages.error(request, f'Error al actualizar: {str(e)}')
+        personalizacion.save()
+        messages.success(request, 'Personalización actualizada correctamente.')
+        return redirect('pedidos_personalizados')
 
     clientes_list = Usuario.objects.filter(id_rol__nombre_rol='cliente')
     marcas_list = marcas.objects.all()
@@ -739,6 +741,22 @@ def editar_personalizacion(request, personalizacion_id):
         'generos': generos_list,
         'colores': colores_list
     })
+    
+@requiere_rol_empleado
+def cambiar_estado_personalizacion(request, personalizacion_id):
+    p = get_object_or_404(Personalizacion, id_personalizacion=personalizacion_id)
+
+    if request.method == 'POST':
+        nuevo_estado = request.POST.get('estado')
+
+        if nuevo_estado in ['pendiente', 'en_proceso', 'terminado', 'cancelado']:
+            p.estado = nuevo_estado
+            p.save()
+            messages.success(request, 'Estado actualizado correctamente.')
+        else:
+            messages.error(request, 'Estado inválido.')
+
+    return redirect('pedidos_personalizados')
 
 
 @requiere_rol_empleado
