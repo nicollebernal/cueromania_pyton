@@ -1,3 +1,4 @@
+import json
 from datetime import date
 from decimal import Decimal
 
@@ -111,6 +112,104 @@ def checkout(request):
         'usuario': usuario,
         'items': items,
         'total': total,
+    })
+
+
+def checkout_api(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return JsonResponse({'success': False, 'error': 'Debes iniciar sesión para completar la compra.'}, status=401)
+
+    try:
+        usuario = Usuario.objects.get(id_usuario=usuario_id)
+    except Usuario.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Usuario no encontrado.'}, status=401)
+
+    carro = Carro(request)
+    if not carro.carro:
+        return JsonResponse({'success': False, 'error': 'El carrito está vacío.'}, status=400)
+
+    productos = Producto.objects.filter(id_producto__in=carro.carro.keys())
+    items = []
+    total = Decimal('0.00')
+
+    for producto in productos:
+        entry = carro.carro.get(str(producto.id_producto), {})
+        cantidad = int(entry.get('cantidad', 1))
+        subtotal = producto.precio * cantidad
+        total += subtotal
+        items.append({
+            'id_producto': producto.id_producto,
+            'nombre': producto.nombre,
+            'talla': producto.talla,
+            'precio': str(producto.precio),
+            'cantidad': cantidad,
+            'subtotal': str(subtotal),
+        })
+
+    if request.method == 'POST':
+        try:
+            content_type = request.META.get('CONTENT_TYPE', '')
+            if 'application/json' in content_type:
+                payload = json.loads(request.body.decode('utf-8') or '{}')
+            else:
+                payload = request.POST
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'JSON inválido.'}, status=400)
+
+        metodo_pago = str(payload.get('metodo_pago', '')).strip()
+        opcion_pago = str(payload.get('opcion_pago', '')).strip()
+        personalizacion = str(payload.get('personalizacion', '')).strip()
+
+        if metodo_pago not in ['Nequi', 'Bancolombia', 'Daviplata']:
+            return JsonResponse({'success': False, 'error': 'Selecciona un método de pago válido.'}, status=400)
+
+        venta = Venta.objects.create(
+            fecha_ventas=date.today(),
+            estado_venta='Pendiente',
+            total=total,
+            id_usuario=usuario,
+        )
+
+        for item in items:
+            producto = Producto.objects.get(id_producto=item['id_producto'])
+            cantidad = item['cantidad']
+            subtotal = Decimal(item['subtotal'])
+            DetalleVenta.objects.create(
+                cantidad=cantidad,
+                cantidad_pagada=subtotal,
+                precio_unitario=producto.precio,
+                id_venta=venta,
+                id_producto=producto,
+            )
+            producto.stock_producto = max(producto.stock_producto - cantidad, 0)
+            producto.save(update_fields=['stock_producto'])
+
+        Pago.objects.create(
+            precio=total,
+            estado_pago='Por validar',
+            metodo_pagos=metodo_pago,
+            opcion_pagos=opcion_pago,
+            id_venta=venta,
+        )
+
+        carro.limpiar()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Compra registrada con éxito.',
+            'venta_id': venta.id_ventas,
+            'total': str(total),
+            'metodo_pago': metodo_pago,
+            'opcion_pago': opcion_pago,
+            'personalizacion': personalizacion,
+        }, status=201)
+
+    return JsonResponse({
+        'success': True,
+        'items': items,
+        'total': str(total),
+        'payment_methods': ['Nequi', 'Bancolombia', 'Daviplata'],
     })
 
 

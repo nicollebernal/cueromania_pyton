@@ -34,4 +34,6 @@ urlpatterns = [
     path('editar-personalizacion/<int:personalizacion_id>/', views.editar_personalizacion, name='editar_personalizacion_empleado'),
     path('eliminar-personalizacion/<int:personalizacion_id>/', views.eliminar_personalizacion, name='eliminar_personalizacion'),
     path('cambiar-estado/<int:personalizacion_id>/', views.cambiar_estado_personalizacion, name='cambiar_estado_personalizacion'),
+    # Ruta para importar productos desde CSV
+    path('importar-productos/', views.importar_productos, name='importar_productos'),
 ]

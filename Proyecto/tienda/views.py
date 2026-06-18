@@ -316,7 +316,7 @@ def nosotros(request):
         return render(request, 'cliente/nosotros.html', {'usuario': usuario})
     return render(request, 'cliente/nosotros.html')
 def contacto(request):
-    return render(request, 'tienda/contacto.html')
+    return render(request, 'cliente/contacto.html')
 
 
 

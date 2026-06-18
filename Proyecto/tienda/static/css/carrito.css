@@ -4,7 +4,7 @@
     border: 1px solid #e5e7eb;
     margin-top: 5%;
     border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     padding: 20px;
 }
 
@@ -25,7 +25,6 @@ h1 {
     font-weight: bold;
 }
 
-
 .cart-item {
     display: grid;
     grid-template-columns: 100px 1fr 120px 120px 50px;
@@ -41,9 +40,8 @@ h1 {
 
 .cart-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
 }
-
 
 .cart-img img {
     width: 90px;
@@ -51,7 +49,6 @@ h1 {
     object-fit: cover;
     border-radius: 10px;
 }
-
 
 .cart-info h6 {
     font-weight: 600;
@@ -65,7 +62,6 @@ h1 {
     color: #c0392b;
 }
 
-
 .cart-cantidad {
     text-align: center;
 }
@@ -78,7 +74,6 @@ h1 {
     border: 1px solid #d1d5db;
 }
 
-
 .cart-subtotal {
     text-align: center;
 }
@@ -88,7 +83,6 @@ h1 {
     margin: 0;
     color: #1e293b;
 }
-
 
 .cart-delete a {
     color: #c0392b;
@@ -101,19 +95,16 @@ h1 {
     color: #7f1d1d;
 }
 
-
 hr {
     border: 1px solid #e5e7eb;
 }
-
 
 .card {
     border-radius: 12px;
     border: 1px solid #e5e7eb;
     background-color: #ffffff;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
-
 
 .btn-dark {
     background: linear-gradient(135deg, #5a0f14, #8b1c24);
@@ -126,4 +117,53 @@ hr {
 
 .btn-dark:hover {
     transform: scale(1.05);
+}
+
+.checkout-page {
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+.checkout-page .card {
+    border-radius: 24px;
+}
+
+.checkout-summary-card {
+    background-color: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 1.5rem;
+}
+
+.summary-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summary-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.card.shadow-sm {
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #5a0f14, #8b1c24);
+    border: none;
+}
+
+.btn-outline-secondary {
+    border-color: #c7cbd1;
+}
+
+.checkout-page h1,
+.checkout-page h5 {
+    color: #111827;
+}
+
+.checkout-page .badge {
+    font-size: 0.83rem;
+    padding: 0.55em 0.9em;
+    letter-spacing: 0.02em;
 }

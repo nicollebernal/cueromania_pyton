@@ -425,7 +425,84 @@ def crear_producto(request):
     })
 
 
-# ====== VENTAS CON CARRITO ======
+@requiere_rol_empleado
+def importar_productos(request):
+    
+    if request.method == 'POST' and request.FILES.get('file'):
+        archivo = request.FILES['file']
+        import csv, io
+        try:
+            contenido = archivo.read().decode('utf-8')
+        except Exception:
+            archivo.seek(0)
+            contenido = archivo.read().decode('latin-1')
+
+        reader = csv.DictReader(io.StringIO(contenido))
+        import traceback
+        count = 0
+        for row in reader:
+            nombre = row.get('nombre') or row.get('nombre_producto') or row.get('name')
+            if not nombre:
+                continue
+            precio = row.get('precio') or row.get('price') or '0'
+            talla = row.get('talla') or row.get('size') or ''
+            estado = row.get('estado') or 'disponible'
+            stock = row.get('stock_producto') or row.get('stock') or '0'
+            descripcion = row.get('descripcion') or ''
+
+            def resolver_fk(model, val, name_fields):
+                if not val:
+                    return None
+                try:
+                    if str(val).isdigit():
+                        return model.objects.get(pk=int(val))
+                except Exception:
+                    pass
+                for nf in name_fields:
+                    qs = model.objects.filter(**{f"{nf}__iexact": val})
+                    if qs.exists():
+                        return qs.first()
+                return None
+
+            marca = resolver_fk(marcas, row.get('marca') or row.get('id_marca'), ['nombre_marca'])
+            categoria_fk = resolver_fk(categoria, row.get('categoria') or row.get('id_categoria'), ['nombre_categoria'])
+            color_fk = resolver_fk(colores, row.get('color') or row.get('id_color'), ['nombre_color'])
+            genero_fk = resolver_fk(genero, row.get('genero') or row.get('id_genero'), ['nombre_genero'])
+            tipo_fk = resolver_fk(tipos_cierres, row.get('tipo_cierre') or row.get('id_tipo_cierre'), ['tipo_cierre'])
+
+            try:
+                next_id = Producto.objects.aggregate(max_id=Max('id_producto'))['max_id'] or 0
+                next_id = max(next_id, 0) + 1
+
+                producto = Producto(
+                    id_producto=next_id,
+                    nombre=nombre,
+                    precio=precio,
+                    talla=talla,
+                    estado=estado,
+                    stock_producto=int(float(stock)),
+                    descripcion=descripcion,
+                    id_marca=marca if marca else marcas.objects.first(),
+                    id_categoria=categoria_fk if categoria_fk else categoria.objects.first(),
+                    id_color=color_fk if color_fk else colores.objects.first(),
+                    id_genero=genero_fk if genero_fk else genero.objects.first(),
+                    id_tipo_cierre=tipo_fk if tipo_fk else tipos_cierres.objects.first()
+                )
+                producto.save()
+                count += 1
+            except Exception:
+                # Ignorar filas con error para no detener toda la importación
+                traceback.print_exc()
+                continue
+
+        messages.success(request, f'Se importaron {count} productos.')
+    else:
+        messages.error(request, 'No se seleccionó un archivo CSV.')
+
+    return redirect('inventario_empleado')
+
+
+
 @requiere_rol_empleado
 def carrito_ventas(request):
     """

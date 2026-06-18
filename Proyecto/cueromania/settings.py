@@ -92,4 +92,3 @@ DEFAULT_FROM_EMAIL = 'montielsebastian555@gmail.com'
 # Para desarrollo local puedes volver a usar archivos de email si necesitas:
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
-

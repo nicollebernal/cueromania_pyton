@@ -16,13 +16,19 @@
             </p>
         </div>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 align-items-center">
             <a href="{% url 'crear_producto' %}" class="btn btn-success">
-                ➕ Agregar Producto
+                Agregar Producto
             </a>
             <a href="{% url 'empleado' %}" class="btn btn-secondary">
                 ⬅ Volver al Panel
             </a>
+            
+            <form method="POST" action="{% url 'importar_productos' %}" enctype="multipart/form-data" class="d-flex ms-2">
+                {% csrf_token %}
+                <input type="file" name="file" accept=".csv" class="form-control form-control-sm" required>
+                <button type="submit" class="btn btn-primary btn-sm ms-2">Cargar CSV</button>
+            </form>
         </div>
     </div>
 

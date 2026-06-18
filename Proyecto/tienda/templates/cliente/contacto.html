@@ -1,56 +1,152 @@
-<section class="py-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-5">
-                <div class="card h-100 border-0 shadow-sm p-4">
-                    <h2 class="h4 mb-4">¡Contáctanos!</h2>
-                    
-                    <div class="d-flex mb-3">
-                        <i class="fas fa-phone-alt text-primary me-3 mt-1"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">Teléfono</p>
-                            <p class="text-muted">+57 300 123 4567</p>
-                        </div>
-                    </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto | Cueromanía</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cliente.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
 
-                    <div class="d-flex mb-3">
-                        <i class="fas fa-envelope text-primary me-3 mt-1"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">Correo Electrónico</p>
-                            <p class="text-muted">contacto@cueromania.com</p>
-                        </div>
-                    </div>
-
-                    <div class="d-flex mb-3">
-                        <i class="fas fa-map-marker-alt text-primary me-3 mt-1"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">Ubicación</p>
-                            <p class="text-muted">Calle Falsa 123, Bogotá, Colombia</p>
-                        </div>
-                    </div>
-
-                    <div class="d-flex">
-                        <i class="fas fa-clock text-primary me-3 mt-1"></i>
-                        <div>
-                            <p class="mb-0 fw-bold">Horario de Atención</p>
-                            <p class="text-muted small">Lun - Vie: 9:00 AM - 6:00 PM<br>Sáb: 10:00 AM - 2:00 PM</p>
-                        </div>
-                    </div>
-                </div>
+    <header class="navbar-main">
+        <div class="container d-flex align-items-center justify-content-between py-2">
+            <div class="d-flex align-items-center">
+                <a href="{% url 'cliente' %}" class="text-decoration-none d-flex align-items-center">
+                    <img src="{% static 'img/logo.jpeg' %}" alt="Logo Cueromania" width="50" height="50" style="border-radius: 12px;">
+                    <h3 class="brand-title mb-0 ms-2">Cueromanía</h3>
+                </a>
             </div>
 
-            <div class="col-md-7">
-                <div class="card h-100 border-0 shadow-sm overflow-hidden">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.711181283832!2d-74.072092!3d4.628479!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzcnNDIuNSJOIDc0wrAwNCcxOS41Ilc!5e0!3m2!1ses!2sco!4v1617300000000!5m2!1ses!2sco" 
-                        width="100%" 
-                        height="400" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy">
-                    </iframe>
+            <div class="search-wrapper">
+                <form action="{% url 'filtrar_producto' %}" method="GET" class="d-flex align-items-center">
+                    <div style="position: relative; width: 100%;">
+                        <input type="text" name="q" placeholder="Buscar productos..." value="{{ query|default:'' }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-comprar ms-2">Buscar</button>
+                    <a href="{% url 'cliente' %}" class="btn btn-secondary ms-2">Limpiar</a>
+                </form>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <a href="{% url 'carro' %}" class="text-dark">
+                    <svg class="bi bi-cart me-3" xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                    </svg>
+                </a>
+                
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" data-bs-toggle="dropdown">
+                        <img src="{% static 'img/icono.png' %}" alt="Usuario" width="35" height="35" class="rounded-circle me-2">
+                        <span class="fw-bold">{{ usuario.primer_nombre }} {{ usuario.primer_apellido }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end user-dropdown border-0 shadow">
+                        <li><a class="dropdown-item py-2" href="{% url 'perfil' %}">Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </header>
+
+    <nav class="bg-white py-3 shadow-sm">
+        <div class="container">
+            <ul class="nav nav-pills justify-content-center">
+                <li class="nav-item"><a class="nav-link" href="{% url 'cliente' %}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'nosotros' %}">Nosotros</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'personalizacion' %}">Personalización</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'valoraciones' %}">Valoraciones</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'contacto' %}">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold mb-2">¡Contáctanos!</h1>
+                <p class="text-muted">Estamos aquí para ayudarte. Comunícate con nosotros de la forma que prefieras.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card h-100 border-0 shadow-sm p-4">
+                    <div class="d-flex mb-4">
+                        <i class="fas fa-phone-alt text-primary me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div class="flex-grow-1">
+                            <p class="mb-1 fw-bold h6">Teléfono</p>
+                            <p class="text-muted mb-0">+57 300 123 4567</p>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <i class="fas fa-phone-alt text-primary me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div class="flex-grow-1">
+                            <p class="mb-1 fw-bold h6">Teléfono</p>
+                            <p class="text-muted mb-0">+57 300 123 4567</p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <i class="fas fa-clock text-primary me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div class="flex-grow-1">
+                            <p class="mb-1 fw-bold h6">Horario de Atención</p>
+                            <p class="text-muted small mb-0">Lun - Vie: 9:00 AM - 6:00 PM<br>Sáb: 10:00 AM - 2:00 PM</p>
+                        </div>
+                    </div>
+                
+
+                    <div class="d-flex mb-4">
+                        <i class="fas fa-envelope text-primary me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div class="flex-grow-1">
+                            <p class="mb-1 fw-bold h6">Correo Electrónico</p>
+                            <p class="text-muted mb-0">cueromania375@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <i class="fas fa-map-marker-alt text-primary me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div class="flex-grow-1">
+                            <p class="mb-1 fw-bold h6">Ubicación</p>
+                            <p class="text-muted mb-0">Calle Falsa 123, Bogotá, Colombia</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <i class="fab fa-whatsapp text-success me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div class="flex-grow-1">
+                            <p class="mb-2 fw-bold h6">WhatsApp Catálogo</p>
+                            <div class="d-flex flex-column gap-2">
+                                <a href="https://wa.me/c/573014106296" class="btn btn-success btn-sm text-white" target="_blank" rel="noopener">
+                                    <i class="fab fa-whatsapp me-2"></i> +57 301 410 6296
+                                </a>
+                                <a href="https://wa.me/c/573157537533" class="btn btn-success btn-sm text-white" target="_blank" rel="noopener">
+                                    <i class="fab fa-whatsapp me-2"></i> +57 315 753 7533
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                    <iframe src="https://www.google.com/maps/embed?pb=!4v1781724897678!6m8!1m7!1sZOTdq4pVTzR2S4Ct9nzbrg!2m2!1d4.599355889078494!2d-74.14487350350049!3f285.00178355274153!4f-3.3233062737898535!5f2.025160299825736" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-4 text-center">
+        <div class="container">
+            <p class="mb-0 text-muted">&copy; 2026 Cueromanía. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
