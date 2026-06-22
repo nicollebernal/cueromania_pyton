@@ -216,8 +216,24 @@ def checkout_api(request):
 def agregar(request, producto_id):
     carro = Carro(request)
     producto = Producto.objects.get(id_producto=producto_id)
-    carro.agregar(producto)
-    return redirect('carro')
+
+    cantidad_actual = carro.carro.get(
+        str(producto.id_producto), {}
+    ).get('cantidad', 0)
+
+    if cantidad_actual >= producto.stock_producto:
+        messages.error(
+            request,
+            f"Solo hay {producto.stock_producto} unidades disponibles."
+        )
+    else:
+        carro.agregar(producto)
+        messages.success(
+            request,
+            "Producto agregado al carrito correctamente."
+        )
+
+    return redirect('cliente')
 
 def sumar(request, producto_id):
     carro = Carro(request)
@@ -248,14 +264,39 @@ def limpiar(request):
 def editar(request, producto_id):
     carro = Carro(request)
     producto = Producto.objects.get(id_producto=producto_id)
-    
+
     if request.method == 'POST':
         cantidad = int(request.POST.get('cantidad', 1))
+
+        if cantidad > producto.stock_producto:
+            messages.error(
+                request,
+                f"Solo hay {producto.stock_producto} unidades disponibles."
+            )
+            return redirect('editar', producto_id=producto_id)
+
         if cantidad > 0:
             carro.carro[str(producto_id)]['cantidad'] = cantidad
             carro.guardar()
+            messages.success(
+                request,
+                "Cantidad actualizada correctamente."
+            )
         else:
             carro.eliminar(producto)
+
         return redirect('carro')
-    
-    return render(request, 'editar.html', {'producto': producto})
+
+    cantidad_actual = carro.carro.get(
+        str(producto_id), {}
+    ).get('cantidad', 1)
+
+    producto.cantidad = cantidad_actual
+
+    return render(
+        request,
+        'editar.html',
+        {
+            'producto': producto
+        }
+    )
