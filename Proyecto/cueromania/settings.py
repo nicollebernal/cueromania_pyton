@@ -20,9 +20,17 @@ INSTALLED_APPS = [
     'Carrito',
     'crispy_forms',
     'crispy_bootstrap4',
-    'data_wizard',
-    'data_wizard.sources',
 ]
+
+# Cargar `data_wizard` solo si está instalado (evita ModuleNotFoundError en entornos sin el paquete)
+try:
+    import importlib
+    importlib.import_module('data_wizard')
+except Exception:
+    # no está disponible — omitimos la app
+    pass
+else:
+    INSTALLED_APPS += ['data_wizard', 'data_wizard.sources']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

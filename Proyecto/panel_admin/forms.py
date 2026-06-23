@@ -54,6 +54,30 @@ class ProductoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         _aplicar_estilos_bootstrap(self)
         _decimales_sin_confusion_local(self, 'precio')
+        # Campo `talla` como desplegable con opciones fijas
+        TALLAS = [
+            ('U', 'U'),
+            ('S', 'S'),
+            ('M', 'M'),
+            ('L', 'L'),
+            ('XL', 'XL'),
+        ]
+        self.fields['talla'] = forms.ChoiceField(
+            choices=TALLAS,
+            required=True,
+            widget=forms.Select(attrs={'class': 'form-select'}),
+        )
+
+        # Campo `estado` como desplegable con opciones 'nuevo' y 'disponible'
+        ESTADOS_PRODUCTO = [
+            ('nuevo', 'Nuevo'),
+            ('disponible', 'Disponible'),
+        ]
+        self.fields['estado'] = forms.ChoiceField(
+            choices=ESTADOS_PRODUCTO,
+            required=True,
+            widget=forms.Select(attrs={'class': 'form-select'}),
+        )
 
     class Meta:
         model = Producto

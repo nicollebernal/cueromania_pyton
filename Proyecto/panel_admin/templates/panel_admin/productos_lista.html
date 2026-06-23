@@ -36,9 +36,9 @@
         </div>
 
         {% if productos %}
-        <div class="table-responsive">
-            <table class="table-admin w-100" id="tablaProductos">
-                <thead>
+        <div class="table-responsive shadow-sm">
+            <table class="table table-hover table-bordered align-middle text-center w-100" id="tablaProductos">
+                <thead class="table-dark">
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
@@ -75,10 +75,10 @@
                             {% endif %}
                         </td>
                         <td>
-                            <div class="acciones-btns">
-                                <a href="{% url 'panel_producto_editar' p.pk %}" class="btn-accion btn-ver">👁 Ver</a>
-                                <a href="{% url 'panel_producto_editar' p.pk %}" class="btn-accion btn-editar">✏ Editar</a>
-                                <a href="{% url 'panel_producto_eliminar' p.pk %}" class="btn-accion btn-eliminar">🗑 Eliminar</a>
+                            <div class="d-flex justify-content-center gap-1">
+                                <a href="{% url 'panel_producto_editar' p.pk %}" class="btn btn-info btn-sm">Ver</a>
+                                <a href="{% url 'panel_producto_editar' p.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                                <a href="{% url 'panel_producto_eliminar' p.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
                             </div>
                         </td>
                     </tr>

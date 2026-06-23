@@ -235,6 +235,38 @@ h2.interior-title {
     box-shadow: 0 4px 15px rgba(139, 28, 36, 0.2);
 }
 
+.btn-volver,
+.btn-refrescar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white !important;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.btn-volver {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    box-shadow: 0 4px 15px rgba(75, 85, 99, 0.2);
+}
+
+.btn-refrescar {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+.btn-volver:hover,
+.btn-refrescar:hover,
+.btn-pdf:hover,
+.btn-nuevo-green:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
 .table-admin thead th {
     background-color: #f8fafc;
     color: #64748b;

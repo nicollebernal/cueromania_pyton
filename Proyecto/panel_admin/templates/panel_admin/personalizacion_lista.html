@@ -13,9 +13,9 @@
         </div>
 
         {% if items %}
-        <div class="table-responsive">
-            <table class="table-admin w-100">
-                <thead>
+        <div class="table-responsive shadow-sm">
+            <table class="table table-hover table-bordered align-middle text-center w-100">
+                <thead class="table-dark">
                     <tr>
                         <th>ID</th>
                         <th>Imagen</th>
@@ -51,10 +51,10 @@
                         <td>{{ p.id_genero.nombre_genero }}</td>
                         <td><div class="descripcion-cell" title="{{ p.descripcion }}">{{ p.descripcion }}</div></td>
                         <td>
-                            <div class="acciones-btns">
-                                <a href="{% url 'panel_personalizacion_ver' p.pk %}" class="btn-accion btn-ver">Ver</a>
-                                <a href="{% url 'panel_personalizacion_editar' p.pk %}" class="btn-accion btn-editar">✏ Editar</a>
-                                <a href="{% url 'panel_personalizacion_eliminar' p.pk %}" class="btn-accion btn-eliminar">🗑</a>
+                            <div class="d-flex justify-content-center gap-1">
+                                <a href="{% url 'panel_personalizacion_ver' p.pk %}" class="btn btn-info btn-sm">Ver</a>
+                                <a href="{% url 'panel_personalizacion_editar' p.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                                <a href="{% url 'panel_personalizacion_eliminar' p.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
                             </div>
                         </td>
                     </tr>
